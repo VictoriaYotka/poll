@@ -71,10 +71,11 @@ defmodule Poll.Polls do
 
   """
   def list_polls_by_user(user_id) when is_integer(user_id) do
-    Poll
-    |> Repo.all(from p in Poll, where: p.user_id == ^user_id)
-    |> Repo.preload([:user, :votes])
-  end
+  Poll
+  |> where([p], p.user_id == ^user_id)
+  |> Repo.all()
+  |> Repo.preload([:user, :votes])
+end
 
   @doc """
   Retrieves a poll by its unique ID.
@@ -129,30 +130,38 @@ defmodule Poll.Polls do
   end
 
   @doc """
-  Creates multiple options for a given poll.
+  Creates multiple options based on the provided list of option attributes.
+
+  Each option's attributes are validated using the `Option.changeset/2` function.
+  Only valid options are attempted to be inserted into the database.
+  If all options are successfully inserted, returns `{:ok, :all_inserted}`.
+  If there are no valid options or any option insertion fails, returns an error tuple.
 
   ## Parameters
-  - `options_attrs`: A list of maps representing the attributes of each option.
-    Each map should have at least the `:text` and `:poll_id` keys.
+    - options_attrs: A list of maps, where each map contains the attributes for an option (e.g., `%{"text" => "Option text", "poll_id" => 1}`).
 
-  ## Example
+  ## Examples
 
-      iex> Polls.create_options([
+      iex> options_attrs = [
       ...>   %{"text" => "Option 1", "poll_id" => 1},
       ...>   %{"text" => "Option 2", "poll_id" => 1}
-      ...> ])
+      ...> ]
+      iex> Polls.create_options(options_attrs)
       {:ok, :all_inserted}
 
-      iex> Polls.create_options([
+      iex> options_attrs = [
       ...>   %{"text" => "Option 1", "poll_id" => 1},
-      ...>   %{"text" => "", "poll_id" => 1}
-      ...> ])
-      {:error, "No valid options"}
+      ...>   %{"text" => "", "poll_id" => 1}  # Invalid option (empty text)
+      ...> ]
+      iex> Polls.create_options(options_attrs)
+      {:error, "No valid options"}  # Returns error if no valid options exist
 
-  ## Returns
-  - `{:ok, :all_inserted}` if all options are successfully inserted.
-  - `{:error, "No valid options"}` if no valid options are provided.
-  - `{:error, reason}` if some options could not be inserted.
+      iex> options_attrs = [
+      ...>   %{"text" => "Valid Option", "poll_id" => 1},
+      ...>   %{"text" => "Another Valid Option", "poll_id" => 1}
+      ...> ]
+      iex> Polls.create_options(options_attrs)
+      {:ok, :all_inserted}
   """
   def create_options(options_attrs) do
     options_attrs
@@ -201,9 +210,20 @@ defmodule Poll.Polls do
         if has_user_voted?(user_id, poll_id) do
           {:error, :already_voted}
         else
-          %Vote{}
-          |> Vote.changeset(%{user_id: user_id, option_id: option_id, poll_id: poll_id})
-          |> Repo.insert()
+          case Repo.insert(
+                 Vote.changeset(%Vote{}, %{
+                   user_id: user_id,
+                   option_id: option_id,
+                   poll_id: poll_id
+                 })
+               ) do
+            {:ok, _vote} ->
+              updated_option = Repo.get!(Option, option_id) |> Repo.preload(:votes)
+              {:ok, updated_option}
+
+            {:error, changeset} ->
+              {:error, changeset}
+          end
         end
     end
   end

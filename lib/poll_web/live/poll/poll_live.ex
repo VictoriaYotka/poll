@@ -1,18 +1,25 @@
 defmodule PollWeb.PollLive do
   use PollWeb, :live_view
-  alias Poll.Polls
+  alias Poll.{Polls, Accounts}
   alias PollWeb.Helpers
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    current_user_id = Accounts.get_user_by_session_token(session["user_token"]).id
     polls = Polls.list_all_polls()
 
-    {:ok, assign(socket, polls: polls)}
+    {:ok, assign(socket, polls: polls, current_user_id: current_user_id)}
+  end
+
+  def handle_event("filter_by_author(me)", _params, socket) do
+    my_polls = Polls.list_polls_by_user(socket.assigns.current_user_id)
+
+    {:noreply, assign(socket, polls: my_polls)}
   end
 
   def render(assigns) do
     ~H"""
     <div>
-      <h1>Polls</h1>
+      <button phx-click="filter_by_author(me)" >Show mine</button>
 
       <div class="polls">
         <%= if @polls == [] do %>

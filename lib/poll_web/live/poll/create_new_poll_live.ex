@@ -21,6 +21,14 @@ defmodule PollWeb.CreateNewPollLive do
     {:noreply, assign(socket, options: options)}
   end
 
+  def handle_event("remove_option", %{"index" => index}, socket) do
+    options = socket.assigns.options
+
+    updated_options = List.delete_at(options, String.to_integer(index))
+
+    {:noreply, assign(socket, options: updated_options)}
+  end
+
   def handle_event(
         "validate",
         %{"poll" => poll_params, "options" => options},
@@ -80,11 +88,17 @@ defmodule PollWeb.CreateNewPollLive do
             value={option[:text]}
             field={input_name(idx)}
             placeholder={"Option #{idx + 1}"}
+            required
           />
+          <%= if idx > 1 do %>
+            <button type="button" phx-click="remove_option" phx-value-index={idx}>Remove</button>
+          <% end %>
         <% end %>
       </div>
 
-      <button type="button" phx-click="add_option">Add Option</button>
+      <%= if length(@options) < 10 do %>
+        <button type="button" phx-click="add_option">Add Option</button>
+      <% end %>
       <button>Save</button>
     </.form>
     """
