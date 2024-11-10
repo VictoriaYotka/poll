@@ -2,7 +2,7 @@ defmodule Poll.Polls.Poll do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Poll.Polls.{Option, Vote}
+  alias Poll.Polls.Option
   alias Poll.Accounts.User
 
   schema "polls" do
@@ -21,6 +21,7 @@ defmodule Poll.Polls.Poll do
     poll
     |> cast(attrs, [:title, :description, :user_id])
     |> validate_required([:title, :user_id])
+    |> validate_length(:title, min: 1, max: 255)
     |> assoc_constraint(:user)
     |> unique_constraint(:title)
   end

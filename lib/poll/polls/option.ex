@@ -18,6 +18,7 @@ defmodule Poll.Polls.Option do
     option
     |> cast(attrs, [:text, :poll_id])
     |> validate_required([:text, :poll_id])
+    |> validate_length(:text, min: 1, max: 255)
     |> assoc_constraint(:poll)
   end
 end

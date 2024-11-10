@@ -47,8 +47,11 @@ defmodule Poll.Polls do
       []
 
   """
+
   def list_all_polls do
-    Repo.all(Poll)
+    Poll
+    |> Repo.all()
+    |> Repo.preload([:user, :votes])
   end
 
   @doc """
@@ -68,7 +71,37 @@ defmodule Poll.Polls do
 
   """
   def list_polls_by_user(user_id) when is_integer(user_id) do
-    Repo.all(from p in Poll, where: p.user_id == ^user_id)
+    Poll
+    |> Repo.all(from p in Poll, where: p.user_id == ^user_id)
+    |> Repo.preload([:user, :votes])
+  end
+
+  @doc """
+  Retrieves a poll by its unique ID.
+
+  ## Parameters
+    - id: The ID of the poll to retrieve. It must be an integer.
+
+  ## Examples
+
+      iex> Polls.get_poll_by_id(1)
+      %Poll.Polls.Poll{id: 1, title: "Favorite Color", description: "What is your favorite color?"}
+
+      iex> Polls.get_poll_by_id(999)
+      nil
+
+  ## Notes
+    - Returns `nil` if no poll with the given ID is found.
+    - The `id` should be a valid integer (e.g., `1`, `2`, etc.).
+  """
+  def get_poll_by_id(id) do
+    Poll
+    |> Repo.get(id)
+    |> Repo.preload([:user, votes: :user])
+  end
+
+  def change_poll(%Poll{} = poll, attrs \\ %{}) do
+    Poll.changeset(poll, attrs)
   end
 
   ## Option Functions
@@ -95,6 +128,50 @@ defmodule Poll.Polls do
     |> Repo.insert()
   end
 
+  @doc """
+  Creates multiple options for a given poll.
+
+  ## Parameters
+  - `options_attrs`: A list of maps representing the attributes of each option.
+    Each map should have at least the `:text` and `:poll_id` keys.
+
+  ## Example
+
+      iex> Polls.create_options([
+      ...>   %{"text" => "Option 1", "poll_id" => 1},
+      ...>   %{"text" => "Option 2", "poll_id" => 1}
+      ...> ])
+      {:ok, :all_inserted}
+
+      iex> Polls.create_options([
+      ...>   %{"text" => "Option 1", "poll_id" => 1},
+      ...>   %{"text" => "", "poll_id" => 1}
+      ...> ])
+      {:error, "No valid options"}
+
+  ## Returns
+  - `{:ok, :all_inserted}` if all options are successfully inserted.
+  - `{:error, "No valid options"}` if no valid options are provided.
+  - `{:error, reason}` if some options could not be inserted.
+  """
+  def create_options(options_attrs) do
+    options_attrs
+    |> Enum.map(&Option.changeset(%Option{}, &1))
+    |> Enum.filter(& &1.valid?)
+    |> case do
+      [] ->
+        {:error, "No valid options"}
+
+      valid_changesets ->
+        results = Enum.map(valid_changesets, &Repo.insert(&1))
+
+        case Enum.find(results, fn res -> match?({:error, _}, res) end) do
+          nil -> {:ok, :all_inserted}
+          error -> error
+        end
+    end
+  end
+
   ## Vote Functions
 
   @doc """
@@ -103,6 +180,7 @@ defmodule Poll.Polls do
   ## Parameters
 
     - user_id: The ID of the user casting the vote.
+    - poll_id: The ID of the poll the user is voting for.
     - option_id: The ID of the option the user is voting for.
 
   ## Examples
@@ -114,24 +192,35 @@ defmodule Poll.Polls do
       {:error, :already_voted}
 
   """
-  def create_vote(user_id, option_id) do
-    option = Repo.get!(Option, option_id)
+  def create_vote(%{user_id: user_id, poll_id: poll_id, option_id: option_id}) do
+    case Repo.get(Option, option_id) do
+      nil ->
+        {:error, :option_not_found}
 
-    # Check if user has already voted in this poll
-    existing_vote =
-      Repo.one(
-        from v in Vote,
-        join: o in Option, on: v.option_id == o.id,
-        where: v.user_id == ^user_id and o.poll_id == ^option.poll_id
-      )
-
-    if existing_vote do
-      {:error, :already_voted}
-    else
-      %Vote{}
-      |> Vote.changeset(%{user_id: user_id, option_id: option_id})
-      |> Repo.insert()
+      _option ->
+        if has_user_voted?(user_id, poll_id) do
+          {:error, :already_voted}
+        else
+          %Vote{}
+          |> Vote.changeset(%{user_id: user_id, option_id: option_id, poll_id: poll_id})
+          |> Repo.insert()
+        end
     end
+  end
+
+  @doc """
+  Checks if a user has already voted in the given poll.
+
+  ## Examples
+
+      iex> has_user_voted?(123, 1)
+      true
+
+      iex> has_user_voted?(123, 99)
+      false
+  """
+  def has_user_voted?(user_id, poll_id) do
+    Repo.exists?(from v in Vote, where: v.user_id == ^user_id and v.poll_id == ^poll_id)
   end
 
   @doc """
@@ -152,5 +241,19 @@ defmodule Poll.Polls do
   """
   def list_options_by_poll(poll_id) when is_integer(poll_id) do
     Repo.all(from o in Option, where: o.poll_id == ^poll_id)
+  end
+
+  @doc """
+  Returns a random option for the given poll.
+
+  ## Examples
+
+      iex> get_random_option_for_poll(1)
+      %Option{...}
+  """
+  def get_random_option_for_poll(poll_id) do
+    Repo.one(
+      from o in Option, where: o.poll_id == ^poll_id, order_by: fragment("RANDOM()"), limit: 1
+    )
   end
 end

@@ -39,7 +39,7 @@ else
     users = Accounts.list_users()
 
     title = Faker.Lorem.sentence()
-    description = Faker.Lorem.paragraph()
+    description = Faker.Lorem.paragraph() |> String.slice(0, 255)
 
     {:ok, poll} =
       Polls.create_poll(%{
@@ -48,7 +48,7 @@ else
         user_id: Enum.random(users).id
       })
 
-    1..4
+    1..Enum.random(2..5)
     |> Enum.each(fn _j ->
       option_text = Faker.Lorem.word()
       Polls.create_option(%{text: option_text, poll_id: poll.id})
@@ -57,3 +57,27 @@ else
 
   Logger.info("10 new polls have been created!")
 end
+
+# Assigning random votes
+Logger.info("Assigning random votes...")
+
+polls = Repo.all(Poll)
+users = Accounts.list_users()
+
+Enum.each(polls, fn poll ->
+  users_for_poll = Enum.take_random(users, Enum.random(1..10))
+
+  Enum.each(users_for_poll, fn user ->
+    unless Polls.has_user_voted?(user.id, poll.id) do
+      option = Polls.get_random_option_for_poll(poll.id)
+
+      Polls.create_vote(%{
+        user_id: user.id,
+        poll_id: poll.id,
+        option_id: option.id
+      })
+    end
+  end)
+end)
+
+Logger.info("Random votes have been assigned!")

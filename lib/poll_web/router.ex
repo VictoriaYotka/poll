@@ -63,8 +63,15 @@ defmodule PollWeb.Router do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
-      live "/", PollLive
+      live "/new", CreateNewPollLive
     end
+  end
+
+  scope "/", PollWeb do
+    pipe_through :browser
+
+    live "/", PollLive
+    live "/:id", SinglePollLive
   end
 
   scope "/", PollWeb do

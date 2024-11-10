@@ -11,20 +11,20 @@ defmodule Poll.Accounts do
   ## Database getters
 
   @doc """
-  Lists all users.
+    Lists all users.
 
-  ## Examples
+    ## Examples
 
-      iex> list_users()
-      [%User{}, %User{}, %User{}]
+        iex> list_users()
+        [%User{}, %User{}, %User{}]
 
-      iex> list_users()
-      []
+        iex> list_users()
+        []
 
-"""
-def list_users do
-  Repo.all(User)
-end
+  """
+  def list_users do
+    Repo.all(User)
+  end
 
   @doc """
   Gets a user by email.
