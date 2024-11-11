@@ -87,57 +87,99 @@ defmodule Poll.Polls do
         ]
   """
 
-  def list_all_polls(filters \\ %{}) do
-    query =
-      from p in Poll,
-        left_join: u in assoc(p, :user),
-        left_join: o in assoc(p, :options),
-        left_join: v in assoc(o, :votes),
-        group_by: [p.id, u.id],
-        select: %{poll: p, user: u, vote_count: count(v.id)}
+  # def list_all_polls(filters \\ %{}) do
+  #   query =
+  #     from p in Poll,
+  #       left_join: u in assoc(p, :user),
+  #       left_join: o in assoc(p, :options),
+  #       left_join: v in assoc(o, :votes),
+  #       group_by: [p.id, u.id],
+  #       select: %{poll: p, user: u, vote_count: count(v.id)}
 
-    query
-    |> apply_user_query(filters[:query])
-    |> apply_sort(filters[:sort] || :date, filters[:direction] || :desc)
-    |> Repo.all()
+  #   query
+  #   |> apply_user_query(filters[:query])
+  #   |> apply_sort(filters[:sort] || :date, filters[:direction] || :desc)
+  #   |> Repo.all()
+  # end
+
+  # defp apply_user_query(query, nil), do: query
+
+  # defp apply_user_query(query, user_query) when user_query != "" do
+  #   from p in query,
+  #     where: ilike(p.title, ^"%#{user_query}%") or ilike(p.description, ^"%#{user_query}%")
+  # end
+
+  # defp apply_sort(query, :date, direction) do
+  #   case direction do
+  #     :asc -> from p in query, order_by: [asc: p.inserted_at]
+  #     :desc -> from p in query, order_by: [desc: p.inserted_at]
+  #     _ -> from p in query, order_by: [desc: p.inserted_at]
+  #   end
+  # end
+
+  # defp apply_sort(query, :popularity, direction) do
+  #   case direction do
+  #     :asc ->
+  #       from p in query,
+  #         left_join: v in assoc(p, :votes),
+  #         group_by: p.id,
+  #         order_by: [asc: count(v.id)]
+
+  #     :desc ->
+  #       from p in query,
+  #         left_join: v in assoc(p, :votes),
+  #         group_by: p.id,
+  #         order_by: [desc: count(v.id)]
+
+  #     _ ->
+  #       from p in query,
+  #         left_join: v in assoc(p, :votes),
+  #         group_by: p.id,
+  #         order_by: [desc: count(v.id)]
+  #   end
+  # end
+
+def list_all_polls(sort, direction, query, offset, limit) do
+  base_query =
+    from p in Poll,
+      left_join: u in assoc(p, :user),
+      left_join: o in assoc(p, :options),
+      left_join: v in assoc(o, :votes),
+      group_by: [p.id, u.id],
+      select: %{poll: p, user: u, vote_count: count(v.id)}
+
+  base_query
+  |> apply_user_query(query)
+  |> apply_sort(sort || :date, direction || :desc)
+  |> offset(^offset)
+  |> limit(^limit)
+  |> Repo.all()
+end
+
+defp apply_user_query(query, ""), do: query
+
+defp apply_user_query(query, user_query) when user_query != "" do
+  from p in query,
+    where: ilike(p.title, ^"%#{user_query}%") or ilike(p.description, ^"%#{user_query}%")
+end
+
+defp apply_sort(query, :date, direction) do
+  case direction do
+    :asc -> from p in query, order_by: [asc: p.inserted_at]
+    :desc -> from p in query, order_by: [desc: p.inserted_at]
+    _ -> from p in query, order_by: [desc: p.inserted_at]
   end
+end
 
-  defp apply_user_query(query, nil), do: query
-
-  defp apply_user_query(query, user_query) when user_query != "" do
-    from p in query,
-      where: ilike(p.title, ^"%#{user_query}%") or ilike(p.description, ^"%#{user_query}%")
+defp apply_sort(query, :popularity, direction) do
+  case direction do
+    :asc -> from p in query, left_join: v in assoc(p, :votes), group_by: p.id, order_by: [asc: count(v.id)]
+    :desc -> from p in query, left_join: v in assoc(p, :votes), group_by: p.id, order_by: [desc: count(v.id)]
+    _ -> from p in query, left_join: v in assoc(p, :votes), group_by: p.id, order_by: [desc: count(v.id)]
   end
+end
 
-  defp apply_sort(query, :date, direction) do
-    case direction do
-      :asc -> from p in query, order_by: [asc: p.inserted_at]
-      :desc -> from p in query, order_by: [desc: p.inserted_at]
-      _ -> from p in query, order_by: [desc: p.inserted_at]
-    end
-  end
 
-  defp apply_sort(query, :popularity, direction) do
-    case direction do
-      :asc ->
-        from p in query,
-          left_join: v in assoc(p, :votes),
-          group_by: p.id,
-          order_by: [asc: count(v.id)]
-
-      :desc ->
-        from p in query,
-          left_join: v in assoc(p, :votes),
-          group_by: p.id,
-          order_by: [desc: count(v.id)]
-
-      _ ->
-        from p in query,
-          left_join: v in assoc(p, :votes),
-          group_by: p.id,
-          order_by: [desc: count(v.id)]
-    end
-  end
 
   @doc """
   Lists all polls created by a specific user.
@@ -185,19 +227,36 @@ defmodule Poll.Polls do
       []
 
   """
-  def list_polls_by_user(user_id) when is_integer(user_id) do
-    query =
-      from p in Poll,
-        left_join: u in assoc(p, :user),
-        left_join: o in assoc(p, :options),
-        left_join: v in assoc(o, :votes),
-        where: p.user_id == ^user_id,
-        group_by: [p.id, u.id],
-        order_by: [desc: p.inserted_at],
-        select: %{poll: p, user: u, vote_count: count(v.id)}
+  # def list_polls_by_user(user_id) when is_integer(user_id) do
+  #   query =
+  #     from p in Poll,
+  #       left_join: u in assoc(p, :user),
+  #       left_join: o in assoc(p, :options),
+  #       left_join: v in assoc(o, :votes),
+  #       where: p.user_id == ^user_id,
+  #       group_by: [p.id, u.id],
+  #       order_by: [desc: p.inserted_at],
+  #       select: %{poll: p, user: u, vote_count: count(v.id)}
 
-    Repo.all(query)
-  end
+  #   Repo.all(query)
+  # end
+
+  def list_polls_by_user(user_id, offset, limit) when is_integer(user_id) and is_integer(offset) and is_integer(limit) do
+  query =
+    from p in Poll,
+      left_join: u in assoc(p, :user),
+      left_join: o in assoc(p, :options),
+      left_join: v in assoc(o, :votes),
+      where: p.user_id == ^user_id,
+      group_by: [p.id, u.id],
+      order_by: [desc: p.inserted_at],
+      select: %{poll: p, user: u, vote_count: count(v.id)},
+      limit: ^limit,
+      offset: ^offset
+
+  Repo.all(query)
+end
+
 
   @doc """
   Retrieves a poll by its unique ID.

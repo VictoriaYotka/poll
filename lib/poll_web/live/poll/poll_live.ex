@@ -4,6 +4,8 @@ defmodule PollWeb.PollLive do
   alias Poll.Accounts.User
   alias PollWeb.Helpers
 
+   @limit 3
+
   def mount(_params, session, socket) do
     current_user_id =
       case session["user_token"] do
@@ -17,19 +19,25 @@ defmodule PollWeb.PollLive do
           end
       end
 
-    polls = Polls.list_all_polls()
+    socket =
+    socket
+    |> assign(
+      polls: [],
+      offset: 0,
+      current_user_id: current_user_id,
+      sort_by_date_order: :desc,
+      sort_by_popularity_order: :desc,
+      sort: :date,
+      direction: :desc,
+      form: to_form(%{}),
+      user_query: "",
+      author_filter_applied: false,
+      page_number: 1,
+      page_title: "Introduct Polls: Main"
+    )
+    |> load_polls()
 
-    {:ok,
-     assign(socket,
-       polls: polls,
-       current_user_id: current_user_id,
-       sort_by_date_order: :desc,
-       sort_by_popularity_order: :desc,
-       form: to_form(%{}),
-       user_query: "",
-       author_filter_applied: false,
-       page_title: "Introduct Polls: Main"
-     )}
+  {:ok, socket}
   end
 
   def handle_event("redirect", _, socket) do
@@ -38,70 +46,118 @@ defmodule PollWeb.PollLive do
 
   def handle_event("filter_by_user_query", %{"user_query" => user_query}, socket) do
     Process.send_after(self(), {:filter_by_user_query, user_query}, 500)
-    {:noreply, assign(socket, user_query: user_query, author_filter_applied: false)}
+    # {:noreply, assign(socket, user_query: user_query, author_filter_applied: false)}
+    {:noreply, socket
+   |> assign(polls: [], offset: 0, user_query: user_query, author_filter_applied: false)
+   |> load_polls()}
   end
 
   def handle_event("clear_user_query", _params, socket) do
-    {:noreply, assign(socket, polls: Polls.list_all_polls(), user_query: "")}
+    # {:noreply, assign(socket, polls: Polls.list_all_polls(), user_query: "")}
+    {:noreply, socket
+   |> assign(polls: [], offset: 0, user_query: "")
+   |> load_polls()}
   end
 
   def handle_event("form_submit", %{"user_query" => user_query}, socket) do
-    {:noreply,
-     assign(socket, polls: Polls.list_all_polls(%{query: user_query}), user_query: user_query)}
+    # {:noreply,
+    #  assign(socket, polls: Polls.list_all_polls(%{query: user_query}), user_query: user_query)}
+
+     {:noreply, socket
+   |> assign(polls: [], offset: 0, user_query: user_query)
+   |> load_polls()}
   end
 
   def handle_event("sort_by_date", _params, socket) do
     new_sort_by_date_order = toggle_sort_order(socket.assigns.sort_by_date_order)
-    polls = Polls.list_all_polls(%{sort: :date, direction: new_sort_by_date_order})
+    # polls = Polls.list_all_polls(%{sort: :date, direction: new_sort_by_date_order})
 
-    {:noreply, assign(socket, polls: polls, sort_by_date_order: new_sort_by_date_order)}
+    # {:noreply, assign(socket, polls: polls, sort_by_date_order: new_sort_by_date_order)}
+    {:noreply, socket
+   |> assign(polls: [], offset: 0, user_query: "", sort: :date, direction: new_sort_by_date_order, sort_by_date_order: new_sort_by_date_order, sort_by_popularity_order: :desc)
+   |> load_polls()}
   end
 
   def handle_event("sort_by_popularity", _params, socket) do
     new_sort_by_popularity_order = toggle_sort_order(socket.assigns.sort_by_popularity_order)
-    polls = Polls.list_all_polls(%{sort: :popularity, direction: new_sort_by_popularity_order})
+    # polls = Polls.list_all_polls(%{sort: :popularity, direction: new_sort_by_popularity_order})
 
-    {:noreply,
-     assign(socket, polls: polls, sort_by_popularity_order: new_sort_by_popularity_order)}
+    # {:noreply,
+    #  assign(socket, polls: polls, sort_by_popularity_order: new_sort_by_popularity_order)}
+     {:noreply,
+   socket
+   |> assign(polls: [], offset: 0, user_query: "", sort: :popularity, direction: new_sort_by_popularity_order, sort_by_popularity_order: new_sort_by_popularity_order, sort_by_date_order: :desc)
+   |> load_polls()}
   end
 
   def handle_event("filter_by_author(me)", _params, socket) do
     author_filter_applied? = socket.assigns.author_filter_applied
 
-    polls =
-      if !author_filter_applied? do
-        Polls.list_polls_by_user(socket.assigns.current_user_id)
-      else
-        Polls.list_all_polls()
-      end
+    # polls =
+    #   if !author_filter_applied? do
+    #     Polls.list_polls_by_user(socket.assigns.current_user_id)
+    #   else
+    #     Polls.list_all_polls()
+    #   end
 
-    {:noreply,
-     assign(socket, polls: polls, author_filter_applied: !author_filter_applied?, user_query: "")}
+      {:noreply,
+   socket
+   |> assign(polls: [], offset: 0, author_filter_applied: !author_filter_applied?, user_query: "")
+   |> load_polls()}
   end
 
-  def handle_info({:filter_by_user_query, user_query}, socket) do
-    polls = Polls.list_all_polls(%{query: user_query})
-    {:noreply, assign(socket, polls: polls)}
+  def handle_event("load_more_polls", _params, socket) do
+  {:noreply, load_polls(socket)}
+end
+
+  def handle_info({:filter_by_user_query, _user_query}, socket) do
+    # polls = Polls.list_all_polls(%{query: user_query})
+    # {:noreply, assign(socket, polls: polls)}
+    {:noreply,
+   socket
+  #  |> assign(polls: [], offset: 0)
+   |> load_polls()}
   end
 
   defp toggle_sort_order(:desc), do: :asc
   defp toggle_sort_order(:asc), do: :desc
 
+  defp load_polls(socket) do
+  polls =
+    if socket.assigns.author_filter_applied do
+      Polls.list_polls_by_user(socket.assigns.current_user_id, socket.assigns.offset, @limit)
+    else
+      Polls.list_all_polls(
+          socket.assigns.sort,
+          socket.assigns.direction,
+          socket.assigns.user_query,
+        socket.assigns.offset,
+        @limit
+      )
+    end
+
+  assign(socket, polls: socket.assigns.polls ++ polls, offset: socket.assigns.offset + @limit)
+end
+
   def render(assigns) do
     ~H"""
-    <section class="container mx-auto px-4 py-8">
-      <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+    <button id="back-to-top" phx-hook="BackToTop" class="fixed bottom-5 right-5 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 hidden">
+      ↑
+    </button>
+
+    <section class="container max-w-3xl mx-auto px-4 pt-2 pb-12">
+      <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 mb-6">
         <div class="w-full md:w-1/2 flex justify-center md:justify-start">
-          <img src={~p"/images/logo.png"} alt="Our Polls Logo" class="max-w-xs md:max-w-full" />
+          <img src={~p"/images/poll_logo.jpg"} alt="Our Polls Logo" class="md:max-w-full" />
         </div>
 
-        <div class="text-center md:text-left w-full md:w-1/2">
+        <div class="mb-2 md:mb-4 text-center md:text-left w-full md:w-1/2">
           <h1 class="text-2xl md:text-4xl text-zinc-900 mb-4">
             Engage, Discover, Decide with Us!
           </h1>
         </div>
       </div>
-      <p class="mb-6 text-lg md:text-xl text-zinc-700 leading-relaxed">
+      <p class="mb-6 text-md md:text-xl text-zinc-700 leading-relaxed">
         We believe in the power of shared opinions. With our polls, you have a voice in decisions that matter. Our platform
         makes it easy to create, vote, and see results instantly. Whether for your team, your community, or just for fun,
         our polls bring people together in a single, interactive space.
@@ -124,14 +180,14 @@ defmodule PollWeb.PollLive do
       </button>
     </section>
 
-    <div class="flex flex-col md:flex-row items-center md:items-baseline justify-between mb-6 p-4 bg-gray-100 shadow-lg">
+    <div class="flex flex-col items-center justify-between mb-6 p-4 bg-gray-100 shadow-lg">
       <.form
         for={@form}
         phx-change="filter_by_user_query"
         phx-submit="form_submit"
-        class="w-full md:w-1/2"
+        class="w-full md:w-1/2 mb-4"
       >
-        <div class="relative w-full mb-4 md:mb-0">
+        <div class="relative w-full">
           <input
             name="user_query"
             value={@user_query}
@@ -211,7 +267,10 @@ defmodule PollWeb.PollLive do
         </div>
 
         <div>
-          <button phx-click="filter_by_author(me)" class="flex items-center gap-1 hover:scale-110 focus:scale-110 transition-transform">
+          <button
+            phx-click="filter_by_author(me)"
+            class="flex items-center gap-1 hover:scale-110 focus:scale-110 transition-transform"
+          >
             <%= if @author_filter_applied do %>
               <span class="text-sm text-gray-600">Show all</span>
             <% else %>
@@ -271,26 +330,42 @@ defmodule PollWeb.PollLive do
       </div>
     <% end %>
 
-    <div>
-      <div class="polls">
-        <%= if @polls == [] do %>
-          <p>No polls available.</p>
-        <% else %>
-          <p>Total: <%= length(@polls) %></p>
-          <%= for %{poll: poll, user: user, vote_count: vote_count} <- @polls do %>
-            <div class="poll mb-4">
-              <h2>
-                <.link href={~p"/#{poll.id}"}>
+    <div id="polls" phx-hook="InfiniteScroll" class="mx-auto p-4">
+      <%= if @polls == [] do %>
+        <p class="text-gray-500 text-lg">No polls available.</p>
+      <% else %>
+        <p class="text-xl text-gray-700 mb-4">
+          <%= length(@polls) %> poll(s) found
+        </p>
+        <%= for %{poll: poll, user: user, vote_count: vote_count} <- @polls do %>
+          <div class="shadow-md rounded-lg p-6 mb-6 hover:scale-105 hover:shadow-xl transition-transform">
+            <.link
+              href={~p"/#{poll.id}"}
+              class="flex flex-col md:flex-row md:items-center gap-8 md:gap-16"
+            >
+              <div class="md:w-3/4">
+                <h2 class="mb-2 text-lg md:text-2xl text-indigo-800 hover:text-indigo-600">
                   <%= poll.title %>
-                </.link>
-              </h2>
-              <p><%= poll.description %></p>
-              <p>Author: <%= Helpers.extract_username_from_email(user.email) %></p>
-              <p>Votes: <%= vote_count %></p>
-            </div>
-          <% end %>
+                </h2>
+                <p class="mb-2 text-sm sm:text-md">
+                  <%= poll.description %>
+                </p>
+              </div>
+              <div class="md:w-1/4">
+                <p class="text-sm md:text-md text-gray-500">
+                  <span class="me-1 text-3xl text-indigo-800"><%= vote_count %></span> votes
+                </p>
+                <p class="text-sm md:text-md text-gray-500">
+                  Author: <%= Helpers.extract_username_from_email(user.email) %>
+                </p>
+                <p class="text-sm md:text-md text-gray-500">
+                  Publication date: <%= Helpers.format_datetime(poll.inserted_at) %>
+                </p>
+              </div>
+            </.link>
+          </div>
         <% end %>
-      </div>
+      <% end %>
     </div>
     """
   end

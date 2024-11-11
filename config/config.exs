@@ -14,6 +14,7 @@ config :poll,
 # Configures the endpoint
 config :poll, PollWeb.Endpoint,
   url: [host: "localhost"],
+  static_url: [path: "/"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: PollWeb.ErrorHTML, json: PollWeb.ErrorJSON],

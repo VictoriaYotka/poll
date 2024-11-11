@@ -27,7 +27,8 @@ config :poll, PollWeb.Endpoint,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:poll, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:poll, ~w(--watch)]}
-  ]
+  ],
+  static_url: [at: "/images", from: Path.expand("../assets/static")]
 
 # ## SSL Support
 #

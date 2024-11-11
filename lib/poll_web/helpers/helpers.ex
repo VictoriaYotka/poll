@@ -11,4 +11,8 @@ defmodule PollWeb.Helpers do
       _ -> email
     end
   end
+
+  def format_datetime(datetime) do
+    Timex.Format.DateTime.Formatter.format!(datetime, "{D} {Mfull} {YYYY}")
+  end
 end

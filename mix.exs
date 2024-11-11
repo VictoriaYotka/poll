@@ -59,7 +59,8 @@ defmodule Poll.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:faker, "~> 0.18"}
+      {:faker, "~> 0.18"},
+      {:timex, "~> 3.7"}
     ]
   end
 

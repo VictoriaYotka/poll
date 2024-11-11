@@ -16,16 +16,17 @@
     </script>
   </head>
   <body class="bg-white antialiased">
-    <header class="fixed top-0 left-0 right-0 flex justify-between p-4 sm:p-6 lg:p-8 bg-indigo-400">
+    <header class="fixed top-0 left-0 right-0 z-100 md:relative flex justify-between p-4 sm:p-6 lg:p-8 bg-indigo-400">
       <div>
-        <nav class="flex items-baseline gap-6">
+        <nav class="flex items-center gap-6">
           <div>
             <.link
               href={~p"/"}
-              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
+              class="flex items-center gap-4 text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
             >
+              <img src={~p"/images/logo_small.jpg"} alt="Introduct Polls Logo" class="max-w-10" />
               <h5>
-                Polls logo
+                Introduct Polls
               </h5>
             </.link>
           </div>
@@ -40,7 +41,7 @@
         </nav>
       </div>
 
-      <ul class="hidden sm:flex relative z-10 items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
+      <ul class="hidden md:flex relative z-10 items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
         <%= if @current_user do %>
           <li class="text-[0.8125rem] leading-6 text-zinc-900">
             <%= @current_user.email %>
@@ -82,10 +83,11 @@
         <% end %>
       </ul>
       <!-- Hamburger Icon for mobile -->
-      <div class="sm:hidden flex items-center">
+      <div class="md:hidden flex items-center">
         <button
           id="menu-toggle"
           phx-click={JS.toggle_class("hidden", to: "#mobile-menu")}
+          phx-hook="ScrollControl"
           class="text-zinc-900 hover:scale-110 transition-transform"
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
@@ -97,7 +99,7 @@
     <!-- Mobile Menu (Hidden by default) -->
     <div
       id="mobile-menu"
-      class="sm:hidden hidden fixed top-16 left-0 right-0 h-full bg-white z-50"
+      class="md:hidden hidden fixed top-16 left-0 right-0 h-full bg-white z-50"
     >
       <ul class="flex flex-col items-end gap-4 p-8">
         <%= if @current_user do %>
