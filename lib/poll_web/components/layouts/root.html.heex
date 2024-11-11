@@ -4,36 +4,43 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix=" · Phoenix Framework">
-      <%= assigns[:page_title] || "Poll" %>
-    </.live_title>
+    <title><%= @page_title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Raleway:wght@500&display=swap"
+      rel="stylesheet"
+    />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
   <body class="bg-white antialiased">
-    <header class="flex justify-between p-4 sm:px-6 lg:px-8">
+    <header class="fixed top-0 left-0 right-0 flex justify-between p-4 sm:p-6 lg:p-8 bg-indigo-400">
       <div>
-        <nav class="flex gap-6">
+        <nav class="flex items-baseline gap-6">
           <div>
             <.link
               href={~p"/"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
             >
-              Polls logo
+              <h5>
+                Polls logo
+              </h5>
             </.link>
           </div>
           <%= if @current_user do %>
             <.link
               href={~p"/new"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
             >
               Create new
             </.link>
           <% end %>
         </nav>
       </div>
-      <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
+
+      <ul class="hidden sm:flex relative z-10 items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
         <%= if @current_user do %>
           <li class="text-[0.8125rem] leading-6 text-zinc-900">
             <%= @current_user.email %>
@@ -41,7 +48,7 @@
           <li>
             <.link
               href={~p"/users/settings"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
             >
               Settings
             </.link>
@@ -50,7 +57,7 @@
             <.link
               href={~p"/users/log_out"}
               method="delete"
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
             >
               Log out
             </.link>
@@ -59,7 +66,7 @@
           <li>
             <.link
               href={~p"/users/register"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
             >
               Register
             </.link>
@@ -67,14 +74,74 @@
           <li>
             <.link
               href={~p"/users/log_in"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
             >
               Log in
             </.link>
           </li>
         <% end %>
       </ul>
+      <!-- Hamburger Icon for mobile -->
+      <div class="sm:hidden flex items-center">
+        <button
+          id="menu-toggle"
+          phx-click={JS.toggle_class("hidden", to: "#mobile-menu")}
+          class="text-zinc-900 hover:scale-110 transition-transform"
+        >
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+            <path d="m12 16.495c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25zm0 1.5c.414 0 .75.336.75.75s-.336.75-.75.75-.75-.336-.75-.75.336-.75.75-.75zm0-8.25c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25zm0 1.5c.414 0 .75.336.75.75s-.336.75-.75.75-.75-.336-.75-.75.336-.75.75-.75zm0-8.25c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25zm0 1.5c.414 0 .75.336.75.75s-.336.75-.75.75-.75-.336-.75-.75.336-.75.75-.75z" />
+          </svg>
+        </button>
+      </div>
     </header>
+    <!-- Mobile Menu (Hidden by default) -->
+    <div
+      id="mobile-menu"
+      class="sm:hidden hidden fixed top-16 left-0 right-0 h-full bg-white z-50"
+    >
+      <ul class="flex flex-col items-end gap-4 p-8">
+        <%= if @current_user do %>
+          <li class="text-[0.8125rem] leading-6 text-zinc-900">
+            <%= @current_user.email %>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/settings"}
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+            >
+              Settings
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/log_out"}
+              method="delete"
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+            >
+              Log out
+            </.link>
+          </li>
+        <% else %>
+          <li>
+            <.link
+              href={~p"/users/register"}
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+            >
+              Register
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/log_in"}
+              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+            >
+              Log in
+            </.link>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
     <%= @inner_content %>
   </body>
 </html>

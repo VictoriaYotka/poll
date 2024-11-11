@@ -11,7 +11,7 @@ defmodule PollWeb.UserRegistrationLive do
         Register for an account
         <:subtitle>
           Already registered?
-          <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
+          <.link navigate={~p"/users/log_in"} class="text-brand hover:underline">
             Log in
           </.link>
           to your account now.
@@ -50,7 +50,7 @@ defmodule PollWeb.UserRegistrationLive do
       |> assign(trigger_submit: false, check_errors: false)
       |> assign_form(changeset)
 
-    {:ok, socket, temporary_assigns: [form: nil]}
+    {:ok, socket, temporary_assigns: [form: nil], page_title: "Register"}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do

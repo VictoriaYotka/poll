@@ -12,7 +12,8 @@ defmodule PollWeb.CreateNewPollLive do
      assign(socket,
        form: to_form(changeset),
        current_user_id: current_user_id,
-       options: [%{text: ""}, %{text: ""}]
+       options: [%{text: ""}, %{text: ""}],
+       page_title: "Introduct Polls: Create new poll"
      )}
   end
 

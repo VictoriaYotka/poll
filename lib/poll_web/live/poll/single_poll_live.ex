@@ -1,14 +1,33 @@
 defmodule PollWeb.SinglePollLive do
   use PollWeb, :live_view
   alias Poll.{Polls, Accounts}
+  alias Poll.Accounts.User
   alias PollWeb.Helpers
 
   def mount(%{"id" => poll_id}, session, socket) do
-    current_user_id = Accounts.get_user_by_session_token(session["user_token"]).id
+    current_user_id =
+      case session["user_token"] do
+        nil ->
+          nil
+
+        token ->
+          case Accounts.get_user_by_session_token(token) do
+            %User{id: id} -> id
+            _ -> nil
+          end
+      end
+
     poll = Polls.get_poll_by_id(poll_id)
     has_voted = Polls.has_user_voted?(current_user_id, poll_id)
 
-    {:ok, assign(socket, current_user_id: current_user_id, poll_id: poll_id, poll: poll, has_voted: has_voted)}
+    {:ok,
+     assign(socket,
+       current_user_id: current_user_id,
+       poll_id: poll_id,
+       poll: poll,
+       has_voted: has_voted,
+       page_title: "Introduct Polls: #{poll.title}"
+     )}
   end
 
   def handle_event("vote", %{"option_id" => option_id}, socket) do
@@ -18,8 +37,9 @@ defmodule PollWeb.SinglePollLive do
            option_id: option_id
          }) do
       {:ok, updated_option} ->
-        {:noreply, assign(
-         socket,
+        {:noreply,
+         assign(
+           socket,
            option_id: updated_option.id,
            poll: Polls.get_poll_by_id(socket.assigns.poll_id),
            has_voted: true

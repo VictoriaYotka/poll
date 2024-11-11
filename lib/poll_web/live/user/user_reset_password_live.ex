@@ -50,7 +50,8 @@ defmodule PollWeb.UserResetPasswordLive do
           %{}
       end
 
-    {:ok, assign_form(socket, form_source), temporary_assigns: [form: nil]}
+    {:ok, assign_form(socket, form_source),
+     temporary_assigns: [form: nil], page_title: "Reset password"}
   end
 
   # Do not log in the user after reset password to avoid a

@@ -3,3 +3,11 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+h1, h2, h3, h4, h5, h6, button {
+  font-family: 'Montserrat', 'Arial', 'Helvetica', sans-serif;
+}
+
+body, p, a, span, div, li, input, textarea {
+  font-family: 'Raleway', 'Arial', 'Helvetica', sans-serif;
+}

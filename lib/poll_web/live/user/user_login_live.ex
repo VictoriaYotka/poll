@@ -8,7 +8,7 @@ defmodule PollWeb.UserLoginLive do
         Log in to account
         <:subtitle>
           Don't have an account?
-          <.link navigate={~p"/users/register"} class="font-semibold text-brand hover:underline">
+          <.link navigate={~p"/users/register"} class=" text-brand hover:underline">
             Sign up
           </.link>
           for an account now.
@@ -21,7 +21,7 @@ defmodule PollWeb.UserLoginLive do
 
         <:actions>
           <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
-          <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
+          <.link href={~p"/users/reset_password"} class="text-sm">
             Forgot your password?
           </.link>
         </:actions>
@@ -38,6 +38,6 @@ defmodule PollWeb.UserLoginLive do
   def mount(_params, _session, socket) do
     email = Phoenix.Flash.get(socket.assigns.flash, :email)
     form = to_form(%{"email" => email}, as: "user")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
+    {:ok, assign(socket, form: form), temporary_assigns: [form: form], page_title: "Login"}
   end
 end
