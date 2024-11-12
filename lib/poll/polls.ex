@@ -142,6 +142,10 @@ defmodule Poll.Polls do
     end
   end
 
+  defp apply_sort(query, _, _) do
+    from p in query, order_by: [desc: p.inserted_at]
+  end
+
   @doc """
   Retrieves a paginated list of polls created by a specific user.
 
