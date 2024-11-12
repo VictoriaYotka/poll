@@ -8,9 +8,10 @@ defmodule Poll.AccountsFixtures do
   def valid_user_password, do: "hello world!"
 
   def valid_user_attributes(attrs \\ %{}) do
+    value = Faker.Internet.email()
     Enum.into(attrs, %{
-      email: unique_user_email(),
-      password: valid_user_password()
+      email: value,
+      password: value
     })
   end
 

@@ -8,12 +8,6 @@ defmodule PollWeb.UserSessionController do
     create(conn, params, "Account created successfully!")
   end
 
-  def create(conn, %{"_action" => "password_updated"} = params) do
-    conn
-    |> put_session(:user_return_to, ~p"/users/settings")
-    |> create(params, "Password updated successfully!")
-  end
-
   def create(conn, params) do
     create(conn, params, "Welcome back!")
   end

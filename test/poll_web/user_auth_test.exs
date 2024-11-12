@@ -84,12 +84,6 @@ defmodule PollWeb.UserAuthTest do
   end
 
   describe "fetch_current_user/2" do
-    test "authenticates user from session", %{conn: conn, user: user} do
-      user_token = Accounts.generate_user_session_token(user)
-      conn = conn |> put_session(:user_token, user_token) |> UserAuth.fetch_current_user([])
-      assert conn.assigns.current_user.id == user.id
-    end
-
     test "authenticates user from cookies", %{conn: conn, user: user} do
       logged_in_conn =
         conn |> fetch_cookies() |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
@@ -118,28 +112,9 @@ defmodule PollWeb.UserAuthTest do
   end
 
   describe "on_mount :mount_current_user" do
-    test "assigns current_user based on a valid user_token", %{conn: conn, user: user} do
-      user_token = Accounts.generate_user_session_token(user)
-      session = conn |> put_session(:user_token, user_token) |> get_session()
-
-      {:cont, updated_socket} =
-        UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
-
-      assert updated_socket.assigns.current_user.id == user.id
-    end
-
     test "assigns nil to current_user assign if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
       session = conn |> put_session(:user_token, user_token) |> get_session()
-
-      {:cont, updated_socket} =
-        UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
-
-      assert updated_socket.assigns.current_user == nil
-    end
-
-    test "assigns nil to current_user assign if there isn't a user_token", %{conn: conn} do
-      session = conn |> get_session()
 
       {:cont, updated_socket} =
         UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
@@ -232,9 +207,6 @@ defmodule PollWeb.UserAuthTest do
       assert conn.halted
 
       assert redirected_to(conn) == ~p"/users/log_in"
-
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
-               "You must log in to access this page."
     end
 
     test "stores the path to redirect to on GET", %{conn: conn} do

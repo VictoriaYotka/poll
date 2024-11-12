@@ -125,26 +125,6 @@ defmodule Poll.Accounts do
   end
 
   @doc """
-  Emulates that the email will change without actually changing
-  it in the database.
-
-  ## Examples
-
-      iex> apply_user_email(user, "valid password", %{email: ...})
-      {:ok, %User{}}
-
-      iex> apply_user_email(user, "invalid password", %{email: ...})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def apply_user_email(user, password, attrs) do
-    user
-    |> User.email_changeset(attrs)
-    |> User.validate_current_password(password)
-    |> Ecto.Changeset.apply_action(:update)
-  end
-
-  @doc """
   Updates the user email using the given token.
 
   If the token matches, the user email is updated and the token is deleted.
@@ -171,64 +151,6 @@ defmodule Poll.Accounts do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, changeset)
     |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, [context]))
-  end
-
-  @doc ~S"""
-  Delivers the update email instructions to the given user.
-
-  ## Examples
-
-      iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/users/settings/confirm_email/#{&1}"))
-      {:ok, %{to: ..., body: ...}}
-
-  """
-  def deliver_user_update_email_instructions(%User{} = user, current_email, update_email_url_fun)
-      when is_function(update_email_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "change:#{current_email}")
-
-    Repo.insert!(user_token)
-    UserNotifier.deliver_update_email_instructions(user, update_email_url_fun.(encoded_token))
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for changing the user password.
-
-  ## Examples
-
-      iex> change_user_password(user)
-      %Ecto.Changeset{data: %User{}}
-
-  """
-  def change_user_password(user, attrs \\ %{}) do
-    User.password_changeset(user, attrs, hash_password: false)
-  end
-
-  @doc """
-  Updates the user password.
-
-  ## Examples
-
-      iex> update_user_password(user, "valid password", %{password: ...})
-      {:ok, %User{}}
-
-      iex> update_user_password(user, "invalid password", %{password: ...})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_user_password(user, password, attrs) do
-    changeset =
-      user
-      |> User.password_changeset(attrs)
-      |> User.validate_current_password(password)
-
-    Ecto.Multi.new()
-    |> Ecto.Multi.update(:user, changeset)
-    |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, :all))
-    |> Repo.transaction()
-    |> case do
-      {:ok, %{user: user}} -> {:ok, user}
-      {:error, :user, changeset, _} -> {:error, changeset}
-    end
   end
 
   ## Session

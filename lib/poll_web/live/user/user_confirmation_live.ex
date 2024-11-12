@@ -25,7 +25,9 @@ defmodule PollWeb.UserConfirmationLive do
 
   def mount(%{"token" => token}, _session, socket) do
     form = to_form(%{"token" => token}, as: "user")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: nil], page_title: "Confirm"}
+
+    {:ok, socket}
+    {:ok, assign(socket, form: form), temporary_assigns: %{page_title: "Confirm"}}
   end
 
   # Do not log in the user after confirmation to avoid a
