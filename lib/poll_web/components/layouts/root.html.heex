@@ -86,8 +86,7 @@
       <div class="md:hidden flex items-center">
         <button
           id="menu-toggle"
-          phx-click={JS.toggle_class("hidden", to: "#mobile-menu")}
-          phx-hook="ScrollControl"
+          phx-hook="ToggleMobileMenu"
           class="text-zinc-900 hover:scale-110 transition-transform"
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">

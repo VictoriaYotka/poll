@@ -58,24 +58,68 @@ defmodule PollWeb.SinglePollLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mb-4">
-      <h2><%= @poll.title %></h2>
-      <p><%= @poll.description %></p>
-      <p>Author: <%= Helpers.extract_username_from_email(@poll.user.email) %></p>
-      <p>Total votes: <%= length(@poll.votes) %></p>
-    </div>
-    <%= for option <- @poll.options do %>
-      <div class="mb-3">
-        <h3><%= option.text %></h3>
-
-        <%= if @has_voted do %>
-          <%= if length(option.votes) >= 1 do %>
-            <p>Voters: <%= PollWeb.Helpers.make_usernames_list(option.votes) %></p>
-          <% end %>
-        <% else %>
-          <button phx-click="vote" phx-value-option_id={option.id}>Vote</button>
-        <% end %>
+    <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-10 py-4 mb-8">
+      <div class="md:w-3/4 md:pe-6 md:border-r-2 md:border-indigo">
+        <h2 class="mb-2 text-xl sm:text-2xl text-indigo-800"><%= @poll.title %></h2>
+        <p class="mb-2 text-md sm:text-lg md:text-xl"><%= @poll.description %></p>
       </div>
+      <div class="md:w-1/4">
+        <p class="text-sm md:text-md text-gray-500">
+          <span class="me-1 text-3xl text-indigo-800"><%= length(@poll.votes) %></span> votes
+        </p>
+        <p class="text-sm md:text-md text-gray-500">
+          Author: <%= Helpers.extract_username_from_email(@poll.user.email) %>
+        </p>
+
+        <p class="text-sm md:text-md text-gray-500">
+          Publication date: <%= Helpers.format_datetime(@poll.inserted_at) %>
+        </p>
+      </div>
+    </div>
+
+    <%= if @current_user_id do %>
+      <%= if @has_voted do %>
+        <div class="chart-container md:w-[71%]">
+          <canvas
+            id="voteChart"
+            phx-hook="VoteChart"
+            phx-value-labels={Jason.encode!(Enum.map(@poll.options, & &1.text))}
+            phx-value-votes={Jason.encode!(Enum.map(@poll.options, &length(&1.votes)))}
+            phx-value-voters={
+              Jason.encode!(
+                Enum.map(@poll.options, fn option ->
+                  PollWeb.Helpers.make_usernames_list(option.votes)
+                end)
+              )
+            }
+          >
+          </canvas>
+        </div>
+      <% else %>
+        <%= for option <- @poll.options do %>
+          <div class="md:flex md:justify-between md:items-baseline md:w-[71%] mb-6 p-4 shadow-lg rounded-lg  bg-neutral-100 hover:shadow-xl transition-transform">
+            <h3 class="text-lg font-semibold text-gray-800"><%= option.text %></h3>
+            <button
+              phx-click="vote"
+              phx-value-option_id={option.id}
+              class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 hover:scale-110  transition-transform"
+            >
+              Vote
+            </button>
+          </div>
+        <% end %>
+      <% end %>
+    <% else %>
+      <p class="md:w-[70%] mb-2 text-sm sm:text-md md:text-lg border border-red-900 p-8 rounded text-red-900 shadow-sm">
+        Please
+        <.link
+          href={~p"/users/log_in"}
+          class="inline-block font-bold font-montserrat shadow-sm underline decoration-dotted hover:decoration-solid"
+        >
+          log in
+        </.link>
+        to cast your vote and see results
+      </p>
     <% end %>
     """
   end

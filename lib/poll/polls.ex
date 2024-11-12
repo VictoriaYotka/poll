@@ -36,227 +36,147 @@ defmodule Poll.Polls do
   end
 
   @doc """
-  Retrieves all polls from the database, with optional filtering and sorting.
-
-  The function joins the necessary associations (`user`, `options`, `votes`), allows filtering by title/description, and supports sorting by creation date or popularity (number of votes).
+  Retrieves a paginated list of all polls with optional sorting and filtering.
 
   ## Parameters
-
-  - `filters` (optional, default: `%{}`): A map of filters:
-    - `:query` (string): A search query to filter polls by `title` or `description`.
-    - `:sort` (optional, default: `:date`): The field to sort by. Possible values are:
-      - `:date`: Sort by creation date.
-      - `:popularity`: Sort by the number of votes.
-    - `:direction` (optional, default: `:desc`): The direction to sort. Possible values are:
-      - `:asc`: Ascending order.
-      - `:desc`: Descending order.
-
-  ## Returns
-  - A list of polls with the following structure:
-    - `poll`: The poll data (`%Poll{}`).
-    - `user`: The associated user (`%User{}`).
-    - `vote_count`: The number of votes for the poll (integer).
+    - `sort`: Atom, the field by which to sort (e.g., `:date`, `:popularity`).
+    - `direction`: Atom, the sort direction (`:asc` or `:desc`).
+    - `query`: String, a search term to filter polls by title or description.
+    - `offset`: Integer, the number of records to skip for pagination.
+    - `limit`: Integer, the maximum number of records to retrieve.
 
   ## Examples
 
-  ### Example 1: Retrieve all polls with no filters
-        iex> list_all_polls()
-        [
-          %{poll: %Poll{title: "Poll 1", description: "Description 1", inserted_at: ~N[2024-01-01]}, user: %User{email: "user1@example.com"}, vote_count: 5},
-          %{poll: %Poll{title: "Poll 2", description: "Description 2", inserted_at: ~N[2024-01-02]}, user: %User{email: "user2@example.com"}, vote_count: 2}
-        ]
-
-  ### Example 2: Retrieve all polls filtered by a search query
-        iex> list_all_polls(query: "poll")
-        [
-          %{poll: %Poll{title: "Poll 1", description: "Description 1", inserted_at: ~N[2024-01-01]}, user: %User{email: "user1@example.com"}, vote_count: 5}
-        ]
-
-  ### Example 3: Retrieve all polls sorted by popularity (number of votes) in descending order
-        iex> list_all_polls(sort: :popularity, direction: :desc)
-        [
-          %{poll: %Poll{title: "Poll 1", description: "Description 1", inserted_at: ~N[2024-01-01]}, user: %User{email: "user1@example.com"}, vote_count: 10},
-          %{poll: %Poll{title: "Poll 2", description: "Description 2", inserted_at: ~N[2024-01-02]}, user: %User{email: "user2@example.com"}, vote_count: 5}
-        ]
-
-  ### Example 4: Retrieve all polls sorted by creation date in ascending order
-        iex> list_all_polls(sort: :date, direction: :asc)
-        [
-          %{poll: %Poll{title: "Poll 2", description: "Description 2", inserted_at: ~N[2024-01-02]}, user: %User{email: "user2@example.com"}, vote_count: 2},
-          %{poll: %Poll{title: "Poll 1", description: "Description 1", inserted_at: ~N[2024-01-01]}, user: %User{email: "user1@example.com"}, vote_count: 5}
-        ]
-  """
-
-  # def list_all_polls(filters \\ %{}) do
-  #   query =
-  #     from p in Poll,
-  #       left_join: u in assoc(p, :user),
-  #       left_join: o in assoc(p, :options),
-  #       left_join: v in assoc(o, :votes),
-  #       group_by: [p.id, u.id],
-  #       select: %{poll: p, user: u, vote_count: count(v.id)}
-
-  #   query
-  #   |> apply_user_query(filters[:query])
-  #   |> apply_sort(filters[:sort] || :date, filters[:direction] || :desc)
-  #   |> Repo.all()
-  # end
-
-  # defp apply_user_query(query, nil), do: query
-
-  # defp apply_user_query(query, user_query) when user_query != "" do
-  #   from p in query,
-  #     where: ilike(p.title, ^"%#{user_query}%") or ilike(p.description, ^"%#{user_query}%")
-  # end
-
-  # defp apply_sort(query, :date, direction) do
-  #   case direction do
-  #     :asc -> from p in query, order_by: [asc: p.inserted_at]
-  #     :desc -> from p in query, order_by: [desc: p.inserted_at]
-  #     _ -> from p in query, order_by: [desc: p.inserted_at]
-  #   end
-  # end
-
-  # defp apply_sort(query, :popularity, direction) do
-  #   case direction do
-  #     :asc ->
-  #       from p in query,
-  #         left_join: v in assoc(p, :votes),
-  #         group_by: p.id,
-  #         order_by: [asc: count(v.id)]
-
-  #     :desc ->
-  #       from p in query,
-  #         left_join: v in assoc(p, :votes),
-  #         group_by: p.id,
-  #         order_by: [desc: count(v.id)]
-
-  #     _ ->
-  #       from p in query,
-  #         left_join: v in assoc(p, :votes),
-  #         group_by: p.id,
-  #         order_by: [desc: count(v.id)]
-  #   end
-  # end
-
-def list_all_polls(sort, direction, query, offset, limit) do
-  base_query =
-    from p in Poll,
-      left_join: u in assoc(p, :user),
-      left_join: o in assoc(p, :options),
-      left_join: v in assoc(o, :votes),
-      group_by: [p.id, u.id],
-      select: %{poll: p, user: u, vote_count: count(v.id)}
-
-  base_query
-  |> apply_user_query(query)
-  |> apply_sort(sort || :date, direction || :desc)
-  |> offset(^offset)
-  |> limit(^limit)
-  |> Repo.all()
-end
-
-defp apply_user_query(query, ""), do: query
-
-defp apply_user_query(query, user_query) when user_query != "" do
-  from p in query,
-    where: ilike(p.title, ^"%#{user_query}%") or ilike(p.description, ^"%#{user_query}%")
-end
-
-defp apply_sort(query, :date, direction) do
-  case direction do
-    :asc -> from p in query, order_by: [asc: p.inserted_at]
-    :desc -> from p in query, order_by: [desc: p.inserted_at]
-    _ -> from p in query, order_by: [desc: p.inserted_at]
-  end
-end
-
-defp apply_sort(query, :popularity, direction) do
-  case direction do
-    :asc -> from p in query, left_join: v in assoc(p, :votes), group_by: p.id, order_by: [asc: count(v.id)]
-    :desc -> from p in query, left_join: v in assoc(p, :votes), group_by: p.id, order_by: [desc: count(v.id)]
-    _ -> from p in query, left_join: v in assoc(p, :votes), group_by: p.id, order_by: [desc: count(v.id)]
-  end
-end
-
-
-
-  @doc """
-  Lists all polls created by a specific user.
-
-  ## Parameters
-
-    - `user_id` (integer): The ID of the user whose polls are to be fetched.
-
-  ## Returns
-
-    - A list of maps with the following structure:
-      - `:poll` - The poll data as a `%Poll{}` struct.
-      - `:user` - The user data associated with the poll as a `%User{}` struct.
-      - `:vote_count` - The total count of votes associated with each poll.
-
-  ## Examples
-
-      iex> list_polls_by_user(1)
+      iex> list_all_polls(:date, :desc, "elixir", 0, 10)
       [
         %{
-          poll: %Poll{
-            id: 1,
-            title: "Poll title",
-            description: "Poll description",
-            user_id: 1,
-            inserted_at: ~N[2024-11-11 12:29:37],
-            updated_at: ~N[2024-11-11 12:29:37]
-          },
-          user: %User{
-            id: 1,
-            email: "user@example.com",
-            inserted_at: ~N[2024-11-11 07:39:29],
-            updated_at: ~N[2024-11-11 07:39:29]
-          },
+          poll: %Poll{id: 1, title: "Elixir Poll", ...},
+          user: %User{id: 2, email: "another@example.com", ...},
+          vote_count: 10
+        },
+        ...
+      ]
+
+      iex> list_all_polls(:popularity, :asc, nil, 10, 5)
+      [
+        %{
+          poll: %Poll{id: 3, title: "Popular Poll", ...},
+          user: %User{id: 5, email: "popular@example.com", ...},
+          vote_count: 20
+        },
+        ...
+      ]
+
+      iex> list_all_polls(:date, :desc, "", 0, 10)
+      [
+        %{
+          poll: %Poll{id: 4, title: "General Poll", ...},
+          user: %User{id: 3, email: "user@example.com", ...},
+          vote_count: 7
+        },
+        ...
+      ]
+
+  """
+  def list_all_polls(sort, direction, query, offset, limit) do
+    base_query =
+      from p in Poll,
+        left_join: u in assoc(p, :user),
+        left_join: o in assoc(p, :options),
+        left_join: v in assoc(o, :votes),
+        group_by: [p.id, u.id],
+        select: %{poll: p, user: u, vote_count: count(v.id)}
+
+    base_query
+    |> apply_user_query(query)
+    |> apply_sort(sort || :date, direction || :desc)
+    |> offset(^offset)
+    |> limit(^limit)
+    |> Repo.all()
+  end
+
+  defp apply_user_query(query, ""), do: query
+
+  defp apply_user_query(query, user_query) when user_query != "" do
+    from p in query,
+      where: ilike(p.title, ^"%#{user_query}%") or ilike(p.description, ^"%#{user_query}%")
+  end
+
+  defp apply_sort(query, :date, direction) do
+    case direction do
+      :asc -> from p in query, order_by: [asc: p.inserted_at]
+      :desc -> from p in query, order_by: [desc: p.inserted_at]
+      _ -> from p in query, order_by: [desc: p.inserted_at]
+    end
+  end
+
+  defp apply_sort(query, :popularity, direction) do
+    case direction do
+      :asc ->
+        from p in query,
+          left_join: v in assoc(p, :votes),
+          group_by: p.id,
+          order_by: [asc: count(v.id)]
+
+      :desc ->
+        from p in query,
+          left_join: v in assoc(p, :votes),
+          group_by: p.id,
+          order_by: [desc: count(v.id)]
+
+      _ ->
+        from p in query,
+          left_join: v in assoc(p, :votes),
+          group_by: p.id,
+          order_by: [desc: count(v.id)]
+    end
+  end
+
+  @doc """
+  Retrieves a paginated list of polls created by a specific user.
+
+  ## Parameters
+    - `user_id`: Integer, the ID of the user whose polls are to be retrieved.
+    - `offset`: Integer, the number of records to skip for pagination.
+    - `limit`: Integer, the maximum number of records to retrieve.
+
+  ## Examples
+
+      iex> list_polls_by_user(1, 0, 10)
+      [
+        %{
+          poll: %Poll{id: 1, title: "Poll 1", ...},
+          user: %User{id: 1, email: "user@example.com", ...},
           vote_count: 5
         },
         %{
-          poll: %Poll{...},
-          user: %User{...},
+          poll: %Poll{id: 2, title: "Poll 2", ...},
+          user: %User{id: 1, email: "user@example.com", ...},
           vote_count: 3
-        }
+        },
+        ...
       ]
 
-      iex> list_polls_by_user(999)
+      iex> list_polls_by_user(99, 0, 10)
       []
 
   """
-  # def list_polls_by_user(user_id) when is_integer(user_id) do
-  #   query =
-  #     from p in Poll,
-  #       left_join: u in assoc(p, :user),
-  #       left_join: o in assoc(p, :options),
-  #       left_join: v in assoc(o, :votes),
-  #       where: p.user_id == ^user_id,
-  #       group_by: [p.id, u.id],
-  #       order_by: [desc: p.inserted_at],
-  #       select: %{poll: p, user: u, vote_count: count(v.id)}
+  def list_polls_by_user(user_id, offset, limit)
+      when is_integer(user_id) and is_integer(offset) and is_integer(limit) do
+    query =
+      from p in Poll,
+        left_join: u in assoc(p, :user),
+        left_join: o in assoc(p, :options),
+        left_join: v in assoc(o, :votes),
+        where: p.user_id == ^user_id,
+        group_by: [p.id, u.id],
+        order_by: [desc: p.inserted_at],
+        select: %{poll: p, user: u, vote_count: count(v.id)},
+        limit: ^limit,
+        offset: ^offset
 
-  #   Repo.all(query)
-  # end
-
-  def list_polls_by_user(user_id, offset, limit) when is_integer(user_id) and is_integer(offset) and is_integer(limit) do
-  query =
-    from p in Poll,
-      left_join: u in assoc(p, :user),
-      left_join: o in assoc(p, :options),
-      left_join: v in assoc(o, :votes),
-      where: p.user_id == ^user_id,
-      group_by: [p.id, u.id],
-      order_by: [desc: p.inserted_at],
-      select: %{poll: p, user: u, vote_count: count(v.id)},
-      limit: ^limit,
-      offset: ^offset
-
-  Repo.all(query)
-end
-
+    Repo.all(query)
+  end
 
   @doc """
   Retrieves a poll by its unique ID.
@@ -420,9 +340,11 @@ end
       iex> has_user_voted?(123, 99)
       false
   """
-  def has_user_voted?(user_id, poll_id) do
+  def has_user_voted?(user_id, poll_id) when not is_nil(user_id) and not is_nil(poll_id) do
     Repo.exists?(from v in Vote, where: v.user_id == ^user_id and v.poll_id == ^poll_id)
   end
+
+  def has_user_voted?(_, _), do: false
 
   @doc """
   Lists all options for a specific poll.

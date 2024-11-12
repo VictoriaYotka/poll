@@ -4,7 +4,7 @@ defmodule PollWeb.PollLive do
   alias Poll.Accounts.User
   alias PollWeb.Helpers
 
-   @limit 3
+  @limit 3
 
   def mount(_params, session, socket) do
     current_user_id =
@@ -20,24 +20,24 @@ defmodule PollWeb.PollLive do
       end
 
     socket =
-    socket
-    |> assign(
-      polls: [],
-      offset: 0,
-      current_user_id: current_user_id,
-      sort_by_date_order: :desc,
-      sort_by_popularity_order: :desc,
-      sort: :date,
-      direction: :desc,
-      form: to_form(%{}),
-      user_query: "",
-      author_filter_applied: false,
-      page_number: 1,
-      page_title: "Introduct Polls: Main"
-    )
-    |> load_polls()
+      socket
+      |> assign(
+        polls: [],
+        offset: 0,
+        current_user_id: current_user_id,
+        sort_by_date_order: :desc,
+        sort_by_popularity_order: :desc,
+        sort: :date,
+        direction: :desc,
+        form: to_form(%{}),
+        user_query: "",
+        author_filter_applied: false,
+        page_number: 1,
+        page_title: "Introduct Polls: Main"
+      )
+      |> load_polls()
 
-  {:ok, socket}
+    {:ok, socket}
   end
 
   def handle_event("redirect", _, socket) do
@@ -46,103 +46,123 @@ defmodule PollWeb.PollLive do
 
   def handle_event("filter_by_user_query", %{"user_query" => user_query}, socket) do
     Process.send_after(self(), {:filter_by_user_query, user_query}, 500)
-    # {:noreply, assign(socket, user_query: user_query, author_filter_applied: false)}
-    {:noreply, socket
-   |> assign(polls: [], offset: 0, user_query: user_query, author_filter_applied: false)
-   |> load_polls()}
+
+    {:noreply,
+     socket
+     |> assign(polls: [], offset: 0, user_query: user_query, author_filter_applied: false)
+     |> load_polls()}
   end
 
   def handle_event("clear_user_query", _params, socket) do
-    # {:noreply, assign(socket, polls: Polls.list_all_polls(), user_query: "")}
-    {:noreply, socket
-   |> assign(polls: [], offset: 0, user_query: "")
-   |> load_polls()}
+    {:noreply,
+     socket
+     |> assign(polls: [], offset: 0, user_query: "")
+     |> load_polls()}
   end
 
   def handle_event("form_submit", %{"user_query" => user_query}, socket) do
-    # {:noreply,
-    #  assign(socket, polls: Polls.list_all_polls(%{query: user_query}), user_query: user_query)}
-
-     {:noreply, socket
-   |> assign(polls: [], offset: 0, user_query: user_query)
-   |> load_polls()}
+    {:noreply,
+     socket
+     |> assign(polls: [], offset: 0, user_query: user_query)
+     |> load_polls()}
   end
 
   def handle_event("sort_by_date", _params, socket) do
     new_sort_by_date_order = toggle_sort_order(socket.assigns.sort_by_date_order)
-    # polls = Polls.list_all_polls(%{sort: :date, direction: new_sort_by_date_order})
 
-    # {:noreply, assign(socket, polls: polls, sort_by_date_order: new_sort_by_date_order)}
-    {:noreply, socket
-   |> assign(polls: [], offset: 0, user_query: "", sort: :date, direction: new_sort_by_date_order, sort_by_date_order: new_sort_by_date_order, sort_by_popularity_order: :desc)
-   |> load_polls()}
+    {:noreply,
+     socket
+     |> assign(
+       polls: [],
+       offset: 0,
+       user_query: "",
+       sort: :date,
+       direction: new_sort_by_date_order,
+       sort_by_date_order: new_sort_by_date_order,
+       sort_by_popularity_order: :desc
+     )
+     |> load_polls()}
   end
 
   def handle_event("sort_by_popularity", _params, socket) do
     new_sort_by_popularity_order = toggle_sort_order(socket.assigns.sort_by_popularity_order)
-    # polls = Polls.list_all_polls(%{sort: :popularity, direction: new_sort_by_popularity_order})
 
-    # {:noreply,
-    #  assign(socket, polls: polls, sort_by_popularity_order: new_sort_by_popularity_order)}
-     {:noreply,
-   socket
-   |> assign(polls: [], offset: 0, user_query: "", sort: :popularity, direction: new_sort_by_popularity_order, sort_by_popularity_order: new_sort_by_popularity_order, sort_by_date_order: :desc)
-   |> load_polls()}
+    {:noreply,
+     socket
+     |> assign(
+       polls: [],
+       offset: 0,
+       user_query: "",
+       sort: :popularity,
+       direction: new_sort_by_popularity_order,
+       sort_by_popularity_order: new_sort_by_popularity_order,
+       sort_by_date_order: :desc
+     )
+     |> load_polls()}
   end
 
   def handle_event("filter_by_author(me)", _params, socket) do
     author_filter_applied? = socket.assigns.author_filter_applied
 
-    # polls =
-    #   if !author_filter_applied? do
-    #     Polls.list_polls_by_user(socket.assigns.current_user_id)
-    #   else
-    #     Polls.list_all_polls()
-    #   end
-
-      {:noreply,
-   socket
-   |> assign(polls: [], offset: 0, author_filter_applied: !author_filter_applied?, user_query: "")
-   |> load_polls()}
+    {:noreply,
+     socket
+     |> assign(
+       polls: [],
+       offset: 0,
+       author_filter_applied: !author_filter_applied?,
+       user_query: ""
+     )
+     |> load_polls()}
   end
 
   def handle_event("load_more_polls", _params, socket) do
-  {:noreply, load_polls(socket)}
-end
+    {:noreply, load_polls(socket)}
+  end
 
   def handle_info({:filter_by_user_query, _user_query}, socket) do
-    # polls = Polls.list_all_polls(%{query: user_query})
-    # {:noreply, assign(socket, polls: polls)}
     {:noreply,
-   socket
-  #  |> assign(polls: [], offset: 0)
-   |> load_polls()}
+     socket
+     |> load_polls()}
   end
 
   defp toggle_sort_order(:desc), do: :asc
   defp toggle_sort_order(:asc), do: :desc
 
   defp load_polls(socket) do
-  polls =
-    if socket.assigns.author_filter_applied do
-      Polls.list_polls_by_user(socket.assigns.current_user_id, socket.assigns.offset, @limit)
-    else
-      Polls.list_all_polls(
+    polls =
+      if socket.assigns.author_filter_applied do
+        Polls.list_polls_by_user(socket.assigns.current_user_id, socket.assigns.offset, @limit)
+      else
+        Polls.list_all_polls(
           socket.assigns.sort,
           socket.assigns.direction,
           socket.assigns.user_query,
-        socket.assigns.offset,
-        @limit
-      )
-    end
+          socket.assigns.offset,
+          @limit
+        )
+      end
 
-  assign(socket, polls: socket.assigns.polls ++ polls, offset: socket.assigns.offset + @limit)
-end
+    assign(socket, polls: socket.assigns.polls ++ polls, offset: socket.assigns.offset + @limit)
+  end
 
   def render(assigns) do
     ~H"""
-    <button id="back-to-top" phx-hook="BackToTop" class="fixed bottom-5 right-5 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 hidden">
-      ↑
+    <button
+      id="back-to-top"
+      phx-hook="BackToTop"
+      class="fixed bottom-5 right-5 md:right-[2%] lg:right-16 xl:right-[16%] 2xl:right-[20%] z-10 bg-indigo-500 text-white p-6 rounded-full shadow-lg hover:bg-indigo-800 hover:scale-110 transition-transform hidden"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        stroke="white"
+        fill="white"
+        class="-rotate-90"
+        viewBox="0 0 24 24"
+      >
+        <path d="M10.024 4h6.015l7.961 8-7.961 8h-6.015l7.961-8-7.961-8zm-10.024 16h6.015l7.961-8-7.961-8h-6.015l7.961 8-7.961 8z" />
+      </svg>
     </button>
 
     <section class="container max-w-3xl mx-auto px-4 pt-2 pb-12">
@@ -305,28 +325,30 @@ end
           </svg>
         </button>
       </div>
-    <% end %>
-
-    <%= if @author_filter_applied do %>
+    <% else %>
       <div class="flex items-baseline gap-16 mb-6">
         <p>
-          <strong>My polls:</strong>
+          <strong>Polls shown: </strong>
         </p>
-        <button
-          phx-click="filter_by_author(me)"
-          class="flex items-center gap-2 hover:scale-110 focus:scale-110 transition-transform"
-        >
-          <span>Show all</span>
-          <svg
-            width="16"
-            height="16"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        <%= if @author_filter_applied do %>
+          <button
+            phx-click="filter_by_author(me)"
+            class="flex items-center gap-2 hover:scale-110 focus:scale-110 transition-transform"
           >
-            <path d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
-          </svg>
-        </button>
+            <span>Published by me</span>
+            <svg
+              width="16"
+              height="16"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
+            </svg>
+          </button>
+        <% else %>
+          <span>All</span>
+        <% end %>
       </div>
     <% end %>
 
@@ -334,9 +356,6 @@ end
       <%= if @polls == [] do %>
         <p class="text-gray-500 text-lg">No polls available.</p>
       <% else %>
-        <p class="text-xl text-gray-700 mb-4">
-          <%= length(@polls) %> poll(s) found
-        </p>
         <%= for %{poll: poll, user: user, vote_count: vote_count} <- @polls do %>
           <div class="shadow-md rounded-lg p-6 mb-6 hover:scale-105 hover:shadow-xl transition-transform">
             <.link
@@ -344,7 +363,7 @@ end
               class="flex flex-col md:flex-row md:items-center gap-8 md:gap-16"
             >
               <div class="md:w-3/4">
-                <h2 class="mb-2 text-lg md:text-2xl text-indigo-800 hover:text-indigo-600">
+                <h2 class="mb-2 text-lg md:text-2xl text-indigo-800">
                   <%= poll.title %>
                 </h2>
                 <p class="mb-2 text-sm sm:text-md">

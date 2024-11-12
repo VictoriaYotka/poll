@@ -50,7 +50,10 @@ defmodule PollWeb.UserRegistrationLive do
       |> assign(trigger_submit: false, check_errors: false)
       |> assign_form(changeset)
 
-    {:ok, socket, temporary_assigns: [form: nil], page_title: "Register"}
+    {:ok,
+     socket
+     |> assign(page_title: "Register")
+     |> assign(temporary_assigns: [form: nil])}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
