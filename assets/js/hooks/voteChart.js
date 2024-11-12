@@ -2,23 +2,22 @@ import Chart from "chart.js/auto";
 
 let VoteChart = {
   mounted() {
-    this.voteChart = document.getElementById("voteChart");
-    const ctx = this.el.getContext("2d");
-    const labels = JSON.parse(this.el.getAttribute("phx-value-labels"));
-    const votes = JSON.parse(this.el.getAttribute("phx-value-votes"));
-    const voters = JSON.parse(this.el.getAttribute("phx-value-voters"));
+    const ctx = this.el.querySelector("#voteChart").getContext("2d");
+    const labels = JSON.parse(this.el.getAttribute("data-labels"));
+    const votes = JSON.parse(this.el.getAttribute("data-votes"));
+    const voters = JSON.parse(this.el.getAttribute("data-voters"));
 
-    const plugin = {
-      id: "customCanvasBackgroundColor",
-      beforeDraw: (chart, args, options) => {
-        const { ctx } = chart;
-        ctx.save();
-        ctx.globalCompositeOperation = "destination-over";
-        ctx.fillStyle = options.color || "#f5f5f5";
-        ctx.fillRect(0, 0, chart.width, chart.height);
-        ctx.restore();
-      },
-    };
+        const plugin = {
+          id: "customCanvasBackgroundColor",
+          beforeDraw: (chart, args, options) => {
+            const { ctx } = chart;
+            ctx.save();
+            ctx.globalCompositeOperation = "destination-over";
+            ctx.fillStyle = options.color || "#f5f5f5";
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+          },
+        };
 
     this.chart = new Chart(ctx, {
       type: "bar",
@@ -28,10 +27,10 @@ let VoteChart = {
           {
             label: "",
             data: votes,
-            backgroundColor: "rgba(75, 29, 196, 0.8)", // Indigo-500 color for bars
-            hoverBackgroundColor: "rgba(55, 48, 163, 0.8)", // Indigo-800 for hover
-            barThickness: 10, // Extremely thin bars
-            maxBarThickness: 10, // Ensures maximum bar thickness
+            backgroundColor: "rgba(75, 29, 196, 0.8)",
+            hoverBackgroundColor: "rgba(55, 48, 163, 0.8)",
+            barThickness: 10,
+            maxBarThickness: 10,
           },
         ],
       },
@@ -89,7 +88,7 @@ let VoteChart = {
           padding: 10,
         },
         legend: {
-          display: false, // Hide legend
+          display: false,
         },
         animation: {
           duration: 500,
@@ -100,7 +99,17 @@ let VoteChart = {
       plugins: [plugin],
     });
   },
-  updated() {},
+
+  updated() {
+    const newVotes = JSON.parse(this.el.getAttribute("data-votes"));
+    const newVoters = JSON.parse(this.el.getAttribute("data-voters"));
+
+    this.chart.data.datasets[0].data = newVotes;
+    this.chart.options.plugins.tooltip.callbacks.label = (tooltipItem) =>
+      `Voted: ${newVoters[tooltipItem.dataIndex]}`;
+
+    this.chart.update();
+  },
 };
 
 export default VoteChart;

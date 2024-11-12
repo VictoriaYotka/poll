@@ -20,6 +20,8 @@ defmodule PollWeb.SinglePollLive do
     poll = Polls.get_poll_by_id(poll_id)
     has_voted = Polls.has_user_voted?(current_user_id, poll_id)
 
+    Phoenix.PubSub.subscribe(Poll.PubSub, "poll_#{poll_id}")
+
     {:ok,
      assign(socket,
        current_user_id: current_user_id,
@@ -37,23 +39,29 @@ defmodule PollWeb.SinglePollLive do
            option_id: option_id
          }) do
       {:ok, updated_option} ->
+        Phoenix.PubSub.broadcast(Poll.PubSub, "poll_#{socket.assigns.poll_id}", %{
+          event: "vote_updated",
+          payload: updated_option
+        })
+
         {:noreply,
-         assign(
-           socket,
+         assign(socket,
            option_id: updated_option.id,
            poll: Polls.get_poll_by_id(socket.assigns.poll_id),
            has_voted: true
          )}
 
-      {:error, :already_voted} ->
-        {:noreply, assign(socket, error_message: "You have already voted")}
-
-      {:error, :option_not_found} ->
-        {:noreply, assign(socket, error_message: "Option not found")}
-
-      {:error, changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+      {:error, _reason} ->
+        {:noreply, socket}
     end
+  end
+
+  def handle_info(%{event: "vote_updated", payload: new_data}, socket) do
+    {:noreply,
+     assign(socket,
+       poll: Polls.get_poll_by_id(socket.assigns.poll_id),
+       updated_votes: new_data
+     )}
   end
 
   def render(assigns) do
@@ -79,21 +87,22 @@ defmodule PollWeb.SinglePollLive do
 
     <%= if @current_user_id do %>
       <%= if @has_voted do %>
-        <div class="chart-container md:w-[71%]">
-          <canvas
-            id="voteChart"
-            phx-hook="VoteChart"
-            phx-value-labels={Jason.encode!(Enum.map(@poll.options, & &1.text))}
-            phx-value-votes={Jason.encode!(Enum.map(@poll.options, &length(&1.votes)))}
-            phx-value-voters={
-              Jason.encode!(
-                Enum.map(@poll.options, fn option ->
-                  PollWeb.Helpers.make_usernames_list(option.votes)
-                end)
-              )
-            }
-          >
-          </canvas>
+        <div
+          id="canvas-container"
+          phx-update="ignore"
+          phx-hook="VoteChart"
+          data-labels={Jason.encode!(Enum.map(@poll.options, & &1.text))}
+          data-votes={Jason.encode!(Enum.map(@poll.options, &length(&1.votes)))}
+          data-voters={
+            Jason.encode!(
+              Enum.map(@poll.options, fn option ->
+                PollWeb.Helpers.make_usernames_list(option.votes)
+              end)
+            )
+          }
+          class="chart-container md:w-[71%]"
+        >
+          <canvas id="voteChart"></canvas>
         </div>
       <% else %>
         <%= for option <- @poll.options do %>

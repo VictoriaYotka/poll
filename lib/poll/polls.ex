@@ -7,7 +7,7 @@ defmodule Poll.Polls do
   """
 
   import Ecto.Query, warn: false
-  alias Poll.Repo
+  alias Poll.{Repo, PubSub}
 
   alias Poll.Polls.{Poll, Option, Vote}
 
@@ -29,10 +29,20 @@ defmodule Poll.Polls do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_poll(attrs \\ %{}) do
+  def create_poll(attrs) do
     %Poll{}
     |> Poll.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, poll} ->
+        new_poll = get_poll_with_format(poll.id)
+        Phoenix.PubSub.broadcast(PubSub, "polls:updates", {:new_poll, new_poll})
+
+        {:ok, poll}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -202,6 +212,19 @@ defmodule Poll.Polls do
     |> Repo.preload([:user, votes: :user])
   end
 
+  def get_poll_with_format(id) do
+    base_query =
+      from p in Poll,
+        left_join: u in assoc(p, :user),
+        left_join: o in assoc(p, :options),
+        left_join: v in assoc(o, :votes),
+        where: p.id == ^id,
+        group_by: [p.id, u.id],
+        select: %{poll: p, user: u, vote_count: count(v.id)}
+
+    Repo.one(base_query)
+  end
+
   def change_poll(%Poll{} = poll, attrs \\ %{}) do
     Poll.changeset(poll, attrs)
   end
@@ -320,6 +343,9 @@ defmodule Poll.Polls do
                ) do
             {:ok, _vote} ->
               updated_option = Repo.get!(Option, option_id) |> Repo.preload(:votes)
+              updated_poll = Repo.get(Poll, poll_id)
+              Phoenix.PubSub.broadcast(PubSub, "polls:updates", {:vote_cast, updated_poll})
+
               {:ok, updated_option}
 
             {:error, changeset} ->
