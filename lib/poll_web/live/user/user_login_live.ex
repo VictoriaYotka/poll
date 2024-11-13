@@ -21,9 +21,6 @@ defmodule PollWeb.UserLoginLive do
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <%!-- <.button phx-disable-with="Logging in..." class="w-full">
-            Log in <span aria-hidden="true">→</span>
-          </.button> --%>
           <button
           phx-disable-with="Logging in..."
             type="submit"
