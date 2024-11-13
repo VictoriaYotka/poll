@@ -6,17 +6,19 @@ defmodule PollWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
+    <div class="pt-8  mx-auto max-w-sm">
+      <h2 class="text-center text-xl">
         Register for an account
-        <:subtitle>
+        <p class="mt-4 text-sm">
           Already registered?
-          <.link navigate={~p"/users/log_in"} class="text-brand hover:underline">
+          <.link navigate={~p"/users/log_in"}
+          class="inline-block font-bold font-montserrat text-red-900 shadow-sm underline decoration-dotted hover:decoration-solid"
+>
             Log in
           </.link>
           to your account now.
-        </:subtitle>
-      </.header>
+        </p>
+      </h2>
 
       <.simple_form
         for={@form}
@@ -35,7 +37,24 @@ defmodule PollWeb.UserRegistrationLive do
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+          <%!-- <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button> --%>
+          <button
+          phx-disable-with="Creating account..."
+            type="submit"
+            class="flex items-center gap-4 mx-auto px-6 py-2 bg-indigo-500 text-white rounded-lg hover:scale-110 transition-transform"
+          >
+            <span class="text-lg">Create an account</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              stroke="white"
+              fill="white"
+              viewBox="0 0 24 24"
+            >
+              <path d="M10.024 4h6.015l7.961 8-7.961 8h-6.015l7.961-8-7.961-8zm-10.024 16h6.015l7.961-8-7.961-8h-6.015l7.961 8-7.961 8z" />
+            </svg>
+          </button>
         </:actions>
       </.simple_form>
     </div>
