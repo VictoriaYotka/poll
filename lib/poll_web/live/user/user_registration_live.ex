@@ -11,9 +11,10 @@ defmodule PollWeb.UserRegistrationLive do
         Register for an account
         <p class="mt-4 text-sm">
           Already registered?
-          <.link navigate={~p"/users/log_in"}
-          class="inline-block font-bold font-montserrat text-red-900 shadow-sm underline decoration-dotted hover:decoration-solid"
->
+          <.link
+            navigate={~p"/users/log_in"}
+            class="inline-block font-bold font-montserrat text-red-900 shadow-sm underline decoration-dotted hover:decoration-solid"
+          >
             Log in
           </.link>
           to your account now.
@@ -38,7 +39,7 @@ defmodule PollWeb.UserRegistrationLive do
 
         <:actions>
           <button
-          phx-disable-with="Creating account..."
+            phx-disable-with="Creating account..."
             type="submit"
             class="flex items-center gap-4 mx-auto px-6 py-2 bg-indigo-500 text-white rounded-lg hover:scale-110 transition-transform"
           >

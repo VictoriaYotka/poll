@@ -164,7 +164,7 @@ defmodule PollWeb.PollLive do
     <button
       id="back-to-top"
       phx-hook="BackToTop"
-      class="fixed bottom-5 right-5 md:right-[2%] lg:right-16 xl:right-[16%] 2xl:right-[20%] z-10 bg-indigo-500 text-white p-6 rounded-full shadow-lg hover:bg-indigo-800 hover:scale-110 transition-transform hidden"
+      class="fixed bottom-24 right-5 md:right-[2%] lg:right-16 xl:right-[16%] 2xl:right-[20%] z-10 bg-indigo-500 text-white p-6 rounded-full shadow-lg hover:bg-indigo-800 hover:scale-110 transition-transform hidden"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

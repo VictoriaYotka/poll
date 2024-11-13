@@ -8,8 +8,10 @@ defmodule PollWeb.UserLoginLive do
         Log in to account
         <p class="mt-4 text-sm">
           Don't have an account?
-          <.link navigate={~p"/users/register"}           class="inline-block font-bold font-montserrat text-red-900 shadow-sm underline decoration-dotted hover:decoration-solid"
->
+          <.link
+            navigate={~p"/users/register"}
+            class="inline-block font-bold font-montserrat text-red-900 shadow-sm underline decoration-dotted hover:decoration-solid"
+          >
             Sign up
           </.link>
           for an account now.
@@ -22,7 +24,7 @@ defmodule PollWeb.UserLoginLive do
 
         <:actions>
           <button
-          phx-disable-with="Logging in..."
+            phx-disable-with="Logging in..."
             type="submit"
             class="flex items-center gap-4 mx-auto px-6 py-2 bg-indigo-500 text-white rounded-lg hover:scale-110 transition-transform"
           >

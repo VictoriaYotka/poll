@@ -16,14 +16,14 @@
     </script>
   </head>
   <body class="bg-white antialiased">
-    <header class="fixed top-0 left-0 right-0 z-9999 md:relative  p-4 sm:p-6 lg:p-8 bg-indigo-400">
+    <header class="p-4 sm:p-6 lg:p-8 bg-indigo-500 ">
       <div class="max-w-6xl mx-auto flex justify-between">
         <div>
-          <nav class="flex items-center gap-6">
+          <nav class="flex items-center gap-6 ">
             <div>
               <.link
                 href={~p"/"}
-                class="flex items-center gap-4 text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
+                class="flex items-center gap-4 text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 <svg
                   version="1.1"
@@ -31,6 +31,7 @@
                   viewBox="0 0 122.9 85.6"
                   width="48"
                   height="26"
+                  fill="white"
                 >
                   <g>
                     <path
@@ -47,7 +48,7 @@
             <%= if @current_user do %>
               <.link
                 href={~p"/new"}
-                class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
+                class="inline-block text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 Create new
               </.link>
@@ -57,14 +58,14 @@
 
         <ul class="hidden md:flex relative z-10 items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
           <%= if @current_user do %>
-            <li class="text-[0.8125rem] leading-6 text-zinc-900">
+            <li class="text-[0.8125rem] leading-6 text-neutral-100">
               <%= @current_user.email %>
             </li>
             <li>
               <.link
                 href={~p"/users/log_out"}
                 method="delete"
-                class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
+                class="inline-block text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 Log out
               </.link>
@@ -73,7 +74,7 @@
             <li>
               <.link
                 href={~p"/users/register"}
-                class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
+                class="inline-block text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 Register
               </.link>
@@ -81,7 +82,7 @@
             <li>
               <.link
                 href={~p"/users/log_in"}
-                class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-zinc-700 hover:scale-110 transition-transform"
+                class="inline-block text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 Log in
               </.link>
@@ -95,7 +96,13 @@
             phx-hook="ToggleMobileMenu"
             class="text-zinc-900 hover:scale-110 transition-transform"
           >
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+            <svg
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="white"
+            >
               <path d="m12 16.495c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25zm0 1.5c.414 0 .75.336.75.75s-.336.75-.75.75-.75-.336-.75-.75.336-.75.75-.75zm0-8.25c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25zm0 1.5c.414 0 .75.336.75.75s-.336.75-.75.75-.75-.336-.75-.75.336-.75.75-.75zm0-8.25c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25zm0 1.5c.414 0 .75.336.75.75s-.336.75-.75.75-.75-.336-.75-.75.336-.75.75-.75z" />
             </svg>
           </button>
@@ -143,5 +150,20 @@
     </div>
 
     <%= @inner_content %>
+    <footer class="bg-indigo-500 text-neutral-100 py-4 mx-auto w-full max-w-5xl">
+      <div class="container mx-auto text-center">
+        <p>
+          Made by
+          <a
+            href="https://github.com/VictoriaYotka"
+            class="ms-1 font-bold text-indigo-200 hover:text-neutral-100"
+            target="_blank"
+          >
+            Victoria Yotka
+          </a>
+        </p>
+        <p>2024</p>
+      </div>
+    </footer>
   </body>
 </html>

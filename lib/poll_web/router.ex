@@ -58,7 +58,6 @@ defmodule PollWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{PollWeb.UserAuth, :ensure_authenticated}] do
-
       live "/new", CreateNewPollLive
     end
   end

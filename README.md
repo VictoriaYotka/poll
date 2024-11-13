@@ -17,6 +17,8 @@ The solution includes a Dockerized PostgreSQL database for persistent storage of
 - **Data Visualization with Chart.js**: Poll results are visualized with responsive charts.
 - **JS Hooks**: JavaScript hooks are used for finer client-side interactivity.
 - **Phoenix PubSub for Broadcasts**: PubSub ensures that vote updates are broadcasted in real-time to all connected clients.
+- **Infinite Scroll**: The polling results and polls are dynamically loaded with infinite scroll. As the user scrolls, new poll items are fetched automatically, improving the user experience without page reloads.
+
 
 ## Prerequisites
 
@@ -116,6 +118,9 @@ mix test
 - **LiveView Over Traditional SPA**: LiveView was chosen for real-time updates without requiring a full SPA framework like React or Vue. This reduces complexity and keeps the application server-rendered.
 - **Chart.js for Visualization**: Chart.js was used for simplicity and responsive chart rendering, although other libraries could offer more customization.
 - **Single Vote Limit**: The application limits each user to a single vote per poll. This was enforced at the database level for consistency.
+- **Sorting and Filtering with Ecto**: Sorting and filtering are implemented using efficient **Ecto queries**, ensuring that the database does the heavy lifting and reduces the memory footprint on the server side. This makes fetching polls and results faster, even as the data grows.
+- **Shared Layout for All Pages**: The application uses a shared layout to ensure a consistent user interface across all pages. This layout includes common elements like header, minimizing redundancy and making it easier to maintain the application as it grows.
+
 
 ## Dependencies
 

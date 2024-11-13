@@ -111,7 +111,7 @@ defmodule PollWeb.SinglePollLive do
             <button
               phx-click="vote"
               phx-value-option_id={option.id}
-              class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 hover:scale-110  transition-transform"
+              class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 hover:scale-110  transition-transform"
             >
               Vote
             </button>
