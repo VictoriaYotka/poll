@@ -30,8 +30,8 @@ The solution includes a Dockerized PostgreSQL database for persistent storage of
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/elixir-liveview-polling.git
-cd elixir-liveview-polling
+git clone https://github.com/VictoriaYotka/poll.git
+cd poll
 ```
 
 ### 2. Database Setup with Docker
@@ -47,9 +47,7 @@ docker-compose up -d
 Run Database Migrations and Seed Data:
 
 ```bash
-    mix ecto.create
-    mix ecto.migrate
-    mix run priv/repo/seeds.exs
+    mix ecto.setup
 ```
 
 ### 3. Install Dependencies
@@ -58,7 +56,6 @@ Install Elixir and JavaScript dependencies:
 
 ```bash
 mix deps.get
-cd assets && npm install
 ```
 
 ### 4. Run the Server
