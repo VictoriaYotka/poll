@@ -6,7 +6,7 @@ set_chart_config = (labels, votes, voters) => {
       labels: labels,
       datasets: [
         {
-          label: "",
+          label: "8787878",
           data: votes,
           backgroundColor: "rgba(75, 29, 196, 0.8)",
           hoverBackgroundColor: "rgba(55, 48, 163, 0.8)",

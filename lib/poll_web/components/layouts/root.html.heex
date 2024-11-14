@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="[scrollbar-gutter:stable]">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -18,12 +18,10 @@
   <body class="bg-white antialiased">
     <header class="p-4 sm:p-6 lg:p-8 bg-indigo-500 ">
       <div class="max-w-6xl mx-auto flex justify-between">
-        <div>
           <nav class="flex items-center gap-6 ">
-            <div>
               <.link
                 href={~p"/"}
-                class="flex items-center gap-4 text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
+                class="flex items-center gap-4 leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 <svg
                   version="1.1"
@@ -40,32 +38,30 @@
                     />
                   </g>
                 </svg>
-                <h5>
+                <p class="text-[16px]">
                   Introduct Polls
-                </h5>
+                </p>
               </.link>
-            </div>
             <%= if @current_user do %>
               <.link
                 href={~p"/new"}
-                class="inline-block text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
+                class="text-[16px] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 Create new
               </.link>
             <% end %>
           </nav>
-        </div>
 
-        <ul class="hidden md:flex relative z-10 items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
+        <ul class="hidden md:flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
           <%= if @current_user do %>
-            <li class="text-[0.8125rem] leading-6 text-neutral-100">
+            <li class="text-[16px] leading-6 text-neutral-100">
               <%= @current_user.email %>
             </li>
             <li>
               <.link
                 href={~p"/users/log_out"}
                 method="delete"
-                class="inline-block text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
+                class="text-[16px] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 Log out
               </.link>
@@ -74,7 +70,7 @@
             <li>
               <.link
                 href={~p"/users/register"}
-                class="inline-block text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
+                class="text-[16px] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 Register
               </.link>
@@ -82,7 +78,7 @@
             <li>
               <.link
                 href={~p"/users/log_in"}
-                class="inline-block text-[0.8125rem] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
+                class="text-[16px] leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
               >
                 Log in
               </.link>
@@ -129,14 +125,14 @@
     >
       <ul class="flex flex-col items-end gap-4 p-8">
         <%= if @current_user do %>
-          <li class="text-[0.8125rem] leading-6 text-zinc-900">
+          <li class="text-[16px] leading-6 text-zinc-900">
             <%= @current_user.email %>
           </li>
           <li>
             <.link
               href={~p"/users/log_out"}
               method="delete"
-              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+              class="text-[16px] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
             >
               Log out
             </.link>
@@ -145,7 +141,7 @@
           <li>
             <.link
               href={~p"/users/register"}
-              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+              class="text-[16px] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
             >
               Register
             </.link>
@@ -153,7 +149,7 @@
           <li>
             <.link
               href={~p"/users/log_in"}
-              class="inline-block text-[0.8125rem] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+              class="text-[16px] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
             >
               Log in
             </.link>
@@ -175,6 +171,7 @@
             href="https://github.com/VictoriaYotka"
             class="ms-1 font-bold text-indigo-200 hover:text-neutral-100"
             target="_blank"
+            rel="noopener noreferrer nofollow"
           >
             Victoria Yotka
           </a>
