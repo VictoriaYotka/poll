@@ -3,6 +3,7 @@ defmodule PollWeb.CreateNewPollLive do
 
   alias Poll.{Polls, Accounts}
   alias Poll.Polls.Poll
+  alias PollWeb.IconComponent
 
   def mount(_params, session, socket) do
     current_user_id = Accounts.get_user_by_session_token(session["user_token"]).id
@@ -116,18 +117,12 @@ defmodule PollWeb.CreateNewPollLive do
                   phx-value-index={idx}
                   class="p-1 text-white rounded-md hover:scale-110 transition-transform"
                 >
-                  <svg
-                    width="24"
-                    height="24"
-                    class="hover:fill-red-800 transition-transform"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="m20.015 6.506h-16v14.423c0 .591.448 1.071 1 1.071h14c.552 0 1-.48 1-1.071 0-3.905 0-14.423 0-14.423zm-5.75 2.494c.414 0 .75.336.75.75v8.5c0 .414-.336.75-.75.75s-.75-.336-.75-.75v-8.5c0-.414.336-.75.75-.75zm-4.5 0c.414 0 .75.336.75.75v8.5c0 .414-.336.75-.75.75s-.75-.336-.75-.75v-8.5c0-.414.336-.75.75-.75zm-.75-5v-1c0-.535.474-1 1-1h4c.526 0 1 .465 1 1v1h5.254c.412 0 .746.335.746.747s-.334.747-.746.747h-16.507c-.413 0-.747-.335-.747-.747s.334-.747.747-.747zm4.5 0v-.5h-3v.5z"
-                      fill-rule="nonzero"
-                    />
-                  </svg>
+                  <.live_component
+                    module={IconComponent}
+                    id="delete_option_icon"
+                    name="delete"
+                    fill="black"
+                  />
                 </button>
               <% end %>
             </div>
@@ -141,12 +136,15 @@ defmodule PollWeb.CreateNewPollLive do
             class="flex items-center gap-2 mt-4 px-4 py-2 mx-auto  shadow-lg rounded-lg bg-neutral-100 hover:shadow-xl hover:scale-110 transition-transform"
           >
             <span>Add Option</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="m17.5 11c2.484 0 4.5 2.016 4.5 4.5s-2.016 4.5-4.5 4.5-4.5-2.016-4.5-4.5 2.016-4.5 4.5-4.5zm.5 4v-1.5c0-.265-.235-.5-.5-.5s-.5.235-.5.5v1.5h-1.5c-.265 0-.5.235-.5.5s.235.5.5.5h1.5v1.5c0 .265.235.5.5.5s.5-.235.5-.5c0-.592 0-1.5 0-1.5h1.5c.265 0 .5-.235.5-.5s-.235-.5-.5-.5c-.592 0-1.5 0-1.5 0zm-6.479 1c.043.522.153 1.025.321 1.5h-9.092c-.414 0-.75-.336-.75-.75s.336-.75.75-.75zm1.106-4c-.328.456-.594.96-.785 1.5h-9.092c-.414 0-.75-.336-.75-.75s.336-.75.75-.75zm7.373-3.25c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75zm0-4c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75z"
-                fill-rule="nonzero"
-              />
-            </svg>
+            <.live_component
+              module={IconComponent}
+              id="add_option_icon"
+              name="plus"
+              width="12"
+              height="12"
+              stroke="none"
+              viewBox="0 0 122.875 122.648"
+            />
           </button>
         <% end %>
         <!-- Save Button -->
@@ -156,16 +154,13 @@ defmodule PollWeb.CreateNewPollLive do
             class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white rounded-lg hover:scale-110 transition-transform"
           >
             <span class="text-lg">Publish new poll</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+            <.live_component
+              module={IconComponent}
+              id="create_double_arrow_icon"
+              name="double_arrow"
               stroke="white"
               fill="white"
-              viewBox="0 0 24 24"
-            >
-              <path d="M10.024 4h6.015l7.961 8-7.961 8h-6.015l7.961-8-7.961-8zm-10.024 16h6.015l7.961-8-7.961-8h-6.015l7.961 8-7.961 8z" />
-            </svg>
+            />
           </button>
         </div>
       </.form>
