@@ -25,6 +25,7 @@ import BackToTop from "./hooks/backToTop"
 import InfiniteScroll from "./hooks/infiniteScroll"
 import ToggleMobileMenu from "./hooks/toggleMobileMenu"
 import VoteChart from "./hooks/voteChart"
+import ShowFooter from "./hooks/showFooter"
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
@@ -36,7 +37,13 @@ window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 
-let Hooks = {BackToTop, InfiniteScroll, ToggleMobileMenu, VoteChart};
+let Hooks = {
+  BackToTop,
+  InfiniteScroll,
+  ToggleMobileMenu,
+  VoteChart,
+  ShowFooter,
+};
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

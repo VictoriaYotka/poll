@@ -308,21 +308,23 @@ defmodule PollWeb.PollLive do
           </button>
         </div>
 
-        <div>
-          <button
-            phx-click="filter_by_author(me)"
-            class="flex items-center gap-1 hover:scale-110 focus:scale-110 transition-transform"
-          >
-            <%= if @author_filter_applied do %>
-              <span class="text-sm text-gray-600">Show all</span>
-            <% else %>
-              <span class="text-sm text-gray-600">Show mine</span>
-            <% end %>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path d="M22.906 2.841c1.104-2.412-7.833-2.841-10.907-2.841-2.934 0-12.01.429-10.906 2.841.508 1.11 8.907 12.916 8.907 12.916v5.246l4 2.997v-8.243s8.398-11.806 8.906-12.916zm-10.901-.902c4.243 0 8.144.575 8.144 1.226s-3.9 1.18-8.144 1.18-8.042-.528-8.042-1.18 3.799-1.226 8.042-1.226z" />
-            </svg>
-          </button>
-        </div>
+        <%= if @current_user_id do %>
+          <div>
+            <button
+              phx-click="filter_by_author(me)"
+              class="flex items-center gap-1 hover:scale-110 focus:scale-110 transition-transform"
+            >
+              <%= if @author_filter_applied do %>
+                <span class="text-sm text-gray-600">Show all</span>
+              <% else %>
+                <span class="text-sm text-gray-600">Show mine</span>
+              <% end %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M22.906 2.841c1.104-2.412-7.833-2.841-10.907-2.841-2.934 0-12.01.429-10.906 2.841.508 1.11 8.907 12.916 8.907 12.916v5.246l4 2.997v-8.243s8.398-11.806 8.906-12.916zm-10.901-.902c4.243 0 8.144.575 8.144 1.226s-3.9 1.18-8.144 1.18-8.042-.528-8.042-1.18 3.799-1.226 8.042-1.226z" />
+              </svg>
+            </button>
+          </div>
+        <% end %>
       </div>
     </div>
 
