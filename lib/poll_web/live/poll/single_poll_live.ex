@@ -68,7 +68,7 @@ defmodule PollWeb.SinglePollLive do
     ~H"""
     <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-10 py-4 mb-8">
       <div class="md:w-3/4 md:pe-6 md:border-r-2 md:border-indigo">
-        <h1 class="mb-2 text-xl sm:text-2xl text-indigo-800"><%= @poll.title %></h1>
+        <h1 class="mb-2 text-xl sm:text-2xl text-indigo-800 font-montserrat"><%= @poll.title %></h1>
         <p class="mb-2 text-md sm:text-lg md:text-xl"><%= @poll.description %></p>
       </div>
       <div class="md:w-1/4">
@@ -111,7 +111,7 @@ defmodule PollWeb.SinglePollLive do
             <button
               phx-click="vote"
               phx-value-option_id={option.id}
-              class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 hover:scale-110  transition-transform"
+              class="mt-4 px-4 py-2 bg-indigo-600 text-white font-montserrat rounded-md hover:bg-indigo-700 hover:scale-110  transition-transform"
             >
               Vote
             </button>

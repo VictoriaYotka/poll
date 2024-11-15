@@ -10,7 +10,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        raleway: ["Raleway", "Arial", "Helvetica", "sans-serif"],
+        sans: ["Raleway", "Arial", "Helvetica", "sans-serif"],
         montserrat: ["Montserrat", "Arial", "Helvetica", "sans-serif"],
       },
       colors: {

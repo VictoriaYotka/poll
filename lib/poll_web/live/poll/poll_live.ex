@@ -198,7 +198,7 @@ defmodule PollWeb.PollLive do
               />
             </g>
           </svg>
-          <h1 class="text-center text-l md:text-xl text-zinc-900 mb-4 md:mb-0">Introduct Polls</h1>
+          <h1 class="text-center text-l md:text-xl text-zinc-900 font-montserrat mb-4 md:mb-0">Introduct Polls</h1>
         </div>
 
         <div class="mb-2 md:mb-4 text-center md:text-left w-full md:w-1/2">
@@ -214,7 +214,7 @@ defmodule PollWeb.PollLive do
       </p>
       <button
         phx-click="redirect"
-        class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white rounded-lg hover:scale-110 focus:scale-110 transition-transform"
+        class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white font-montserrat rounded-lg hover:scale-110 focus:scale-110 transition-transform"
       >
         <span class="font-semibold font-montserrat text-lg">Create Your Poll</span>
         <.live_component
@@ -286,7 +286,7 @@ defmodule PollWeb.PollLive do
           <div>
             <button
               phx-click="filter_by_author(me)"
-              class="flex items-center gap-1 hover:scale-110 focus:scale-110 transition-transform"
+              class="flex items-center gap-1 font-montserrat hover:scale-110 focus:scale-110 transition-transform"
             >
               <%= if @author_filter_applied do %>
                 <span class="text-sm text-gray-600">Show all</span>
@@ -308,7 +308,7 @@ defmodule PollWeb.PollLive do
         </p>
         <button
           phx-click="clear_user_query"
-          class="flex items-center gap-2 hover:scale-110 focus:scale-110 transition-transform"
+          class="flex items-center gap-2 font-montserrat hover:scale-110 focus:scale-110 transition-transform"
         >
           <span>Clear</span>
           <.live_component
@@ -328,7 +328,7 @@ defmodule PollWeb.PollLive do
         <%= if @author_filter_applied do %>
           <button
             phx-click="filter_by_author(me)"
-            class="flex items-center gap-2 hover:scale-110 focus:scale-110 transition-transform"
+            class="flex items-center gap-2 font-montserrat hover:scale-110 focus:scale-110 transition-transform"
           >
             <span>Published by me</span>
             <.live_component
@@ -357,7 +357,7 @@ defmodule PollWeb.PollLive do
               class="flex flex-col md:flex-row md:items-center gap-8 md:gap-16"
             >
               <div class="md:w-3/4">
-                <h2 class="mb-2 text-lg md:text-2xl text-indigo-800">
+                <h2 class="mb-2 text-lg md:text-2xl text-indigo-800 font-montserrat">
                   <%= poll.title %>
                 </h2>
                 <p class="mb-2 text-sm sm:text-md">

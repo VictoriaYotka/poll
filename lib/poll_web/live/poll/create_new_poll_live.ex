@@ -133,7 +133,7 @@ defmodule PollWeb.CreateNewPollLive do
           <button
             type="button"
             phx-click="add_option"
-            class="flex items-center gap-2 mt-4 px-4 py-2 mx-auto  shadow-lg rounded-lg bg-neutral-100 hover:shadow-xl hover:scale-110 transition-transform"
+            class="flex items-center gap-2 mt-4 px-4 py-2 mx-auto font-montserrat shadow-lg rounded-lg bg-neutral-100 hover:shadow-xl hover:scale-110 transition-transform"
           >
             <span>Add Option</span>
             <.live_component
@@ -151,7 +151,7 @@ defmodule PollWeb.CreateNewPollLive do
         <div class="mt-6">
           <button
             type="submit"
-            class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white rounded-lg hover:scale-110 transition-transform"
+            class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white font-montserrat rounded-lg hover:scale-110 transition-transform"
           >
             <span class="text-lg">Publish new poll</span>
             <.live_component
