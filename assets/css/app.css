@@ -2,8 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* This file is for your main application CSS */
-
 body, p, a, span, div, li, input, textarea {
   @apply font-raleway;
 }
