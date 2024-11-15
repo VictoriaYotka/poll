@@ -56,11 +56,12 @@ Install Elixir and JavaScript dependencies:
 
 ```bash
 mix deps.get
+cd assets && npm install
 ```
 
 ### 4. Run the Server
 
-Start the Phoenix server:
+Start the Phoenix server (from the root directory):
 
 ```bash
 mix phx.server
