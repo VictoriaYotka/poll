@@ -6,12 +6,12 @@ set_chart_config = (labels, votes, voters) => {
       labels: labels,
       datasets: [
         {
-          label: "8787878",
+          label: "votes",
           data: votes,
           backgroundColor: "rgba(75, 29, 196, 0.8)",
           hoverBackgroundColor: "rgba(55, 48, 163, 0.8)",
-          barThickness: 10,
-          maxBarThickness: 10,
+          barThickness: 16,
+          maxBarThickness: 16,
         },
       ],
     },
@@ -34,7 +34,7 @@ set_chart_config = (labels, votes, voters) => {
           bodyFont: { size: 14 },
           callbacks: {
             label: function (tooltipItem) {
-              return `Voted: ${voters[tooltipItem.dataIndex]}`;
+              return `Voted: ${voters[tooltipItem.dataIndex]}.`;
             },
           },
         },

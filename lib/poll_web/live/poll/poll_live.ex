@@ -198,13 +198,13 @@ defmodule PollWeb.PollLive do
               />
             </g>
           </svg>
-          <h2 class="text-center text-l md:text-xl text-zinc-900 mb-4 md:mb-0">Introduct Polls</h2>
+          <h1 class="text-center text-l md:text-xl text-zinc-900 mb-4 md:mb-0">Introduct Polls</h1>
         </div>
 
         <div class="mb-2 md:mb-4 text-center md:text-left w-full md:w-1/2">
-          <h1 class="text-2xl md:text-4xl text-zinc-900 mb-4 md:mb-0">
+          <strong class="text-2xl md:text-4xl text-zinc-900 mb-4 md:mb-0">
             Engage, Discover, Decide with Us!
-          </h1>
+          </strong>
         </div>
       </div>
       <p class="mb-6 text-md md:text-xl text-zinc-700 leading-relaxed">

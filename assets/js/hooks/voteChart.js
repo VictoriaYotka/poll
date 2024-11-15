@@ -1,5 +1,5 @@
 import Chart from "chart.js/auto";
-import set_chart_config from "../chart_js_config/chart_config";
+import set_chart_config from "../chart_js_config/set_chart_config";
 
 let VoteChart = {
   mounted() {
@@ -8,7 +8,10 @@ let VoteChart = {
     const votes = JSON.parse(this.el.getAttribute("data-votes"));
     const voters = JSON.parse(this.el.getAttribute("data-voters"));
 
-    this.chart = new Chart(ctx, set_chart_config(labels, votes, voters));
+    const chart_config = set_chart_config(labels, votes, voters);
+    this.chart = new Chart(ctx, chart_config);
+
+    window.addEventListener("resize", this.resizeChart.bind(this));
   },
 
   updated() {
@@ -20,6 +23,14 @@ let VoteChart = {
       `Voted: ${newVoters[tooltipItem.dataIndex]}`;
 
     this.chart.update();
+  },
+
+  resizeChart() {
+    this.chart.resize();
+  },
+
+  destroyed() {
+    window.removeEventListener("resize", this.resizeChart.bind(this));
   },
 };
 
