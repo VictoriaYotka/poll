@@ -5,7 +5,8 @@ const plugin = require("tailwindcss/plugin")
 const fs = require("fs")
 const path = require("path")
 
-module.exports = {
+/** @type {import('tailwindcss').Config} */
+const config = {
   content: ["./js/**/*.js", "../lib/poll_web.ex", "../lib/poll_web/**/*.*ex"],
   theme: {
     extend: {
@@ -96,3 +97,5 @@ module.exports = {
     }),
   ],
 };
+
+module.exports = config;
