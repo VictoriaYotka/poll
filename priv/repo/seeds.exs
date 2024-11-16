@@ -40,12 +40,15 @@ else
 
     title = Faker.Lorem.sentence()
     description = Faker.Lorem.paragraph() |> String.slice(0, 255)
+    inserted_at = Faker.DateTime.backward(7)
 
     {:ok, poll} =
       Polls.create_poll(%{
         title: title,
         description: description,
-        user_id: Enum.random(users).id
+        user_id: Enum.random(users).id,
+        inserted_at: inserted_at,
+        updated_at: inserted_at
       })
 
     1..Enum.random(2..5)

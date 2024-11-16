@@ -26,6 +26,7 @@ import InfiniteScroll from "./hooks/infiniteScroll"
 import ToggleMobileMenu from "./hooks/toggleMobileMenu"
 import VoteChart from "./hooks/voteChart"
 import ShowFooter from "./hooks/showFooter"
+import FlashTimeout from "./hooks/flashTimeout"
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
@@ -43,6 +44,7 @@ let Hooks = {
   ToggleMobileMenu,
   VoteChart,
   ShowFooter,
+  FlashTimeout
 };
 
 let csrfToken = document

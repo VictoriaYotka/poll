@@ -2,6 +2,7 @@ let InfiniteScroll = {
   mounted() {
     this.handleScroll = this.handleScroll.bind(this);
     window.addEventListener("scroll", this.handleScroll);
+    this.checkScroll();
   },
 
   destroyed() {
@@ -9,6 +10,10 @@ let InfiniteScroll = {
   },
 
   handleScroll() {
+    this.checkScroll();
+  },
+
+  checkScroll() {
     const scrollPosition = window.scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
 
@@ -17,5 +22,6 @@ let InfiniteScroll = {
     }
   },
 };
+
 
 export default InfiniteScroll;

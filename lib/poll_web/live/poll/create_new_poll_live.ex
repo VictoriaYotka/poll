@@ -56,6 +56,8 @@ defmodule PollWeb.CreateNewPollLive do
 
     with {:ok, poll} <- Polls.create_poll(poll_params),
          {:ok, :all_inserted} <- Polls.create_options(format_options(options, poll.id)) do
+      socket = put_flash(socket, :info, "You created poll '#{poll.title}' successfully!")
+
       {:noreply, redirect(socket, to: "/#{poll.id}")}
     else
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -87,6 +89,7 @@ defmodule PollWeb.CreateNewPollLive do
             field={@form[:title]}
             placeholder="Title"
             class="w-full p-2 rounded-md shadow-sm focus:outline-none"
+            required
           />
         </div>
         <div class="mb-6">
@@ -94,7 +97,8 @@ defmodule PollWeb.CreateNewPollLive do
             type="textarea"
             field={@form[:description]}
             placeholder="Description"
-            class="w-full p-2 rounded-md shadow-sm focus:outline-none "
+            class="w-full p-2 rounded-md shadow-sm focus:outline-none"
+            required
           />
         </div>
         <!-- Options Section -->
@@ -119,7 +123,7 @@ defmodule PollWeb.CreateNewPollLive do
                 >
                   <.live_component
                     module={IconComponent}
-                    id="delete_option_icon"
+                    id={"delete_option_icon_#{idx + 1}"}
                     name="delete"
                     fill="black"
                   />

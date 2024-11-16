@@ -19,7 +19,7 @@ defmodule Poll.Polls.Poll do
   @doc false
   def changeset(poll, attrs) do
     poll
-    |> cast(attrs, [:title, :description, :user_id])
+    |> cast(attrs, [:title, :description, :user_id, :inserted_at, :updated_at])
     |> validate_required([:title, :user_id])
     |> validate_length(:title, min: 1, max: 255)
     |> assoc_constraint(:user)

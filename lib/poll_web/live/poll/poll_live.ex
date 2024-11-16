@@ -174,7 +174,7 @@ defmodule PollWeb.PollLive do
     <button
       id="back-to-top"
       phx-hook="BackToTop"
-      class="fixed bottom-24 right-5 md:right-[2%] lg:right-16 xl:right-[16%] 2xl:right-[20%] z-10 bg-indigo-500 text-white p-6 rounded-full shadow-lg hover:bg-indigo-800 hover:scale-110 transition-transform hidden"
+      class="fixed bottom-24 right-5 md:right-[2%] lg:right-12 xl:right-[12%] 2xl:right-[16%] z-10 bg-indigo-500 text-white p-6 rounded-full shadow-lg hover:bg-indigo-800 hover:scale-110 transition-transform hidden"
     >
       <.live_component
         module={IconComponent}
@@ -187,7 +187,7 @@ defmodule PollWeb.PollLive do
       />
     </button>
 
-    <section class="container max-w-3xl mx-auto px-4 pt-2 pb-12">
+    <section class="max-w-3xl mx-auto px-4 pt-2 pb-12">
       <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 mb-6">
         <div class="w-1/2 sm:w-1/3">
           <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.9 85.6" class="mb-4">
@@ -198,7 +198,9 @@ defmodule PollWeb.PollLive do
               />
             </g>
           </svg>
-          <h1 class="text-center text-l md:text-xl text-zinc-900 font-montserrat mb-4 md:mb-0">Introduct Polls</h1>
+          <h1 class="text-center text-l md:text-xl text-zinc-900 font-montserrat mb-4 md:mb-0">
+            Introduct Polls
+          </h1>
         </div>
 
         <div class="mb-2 md:mb-4 text-center md:text-left w-full md:w-1/2">
