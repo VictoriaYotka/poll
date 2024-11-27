@@ -7,6 +7,17 @@ import Config
 # before starting your production server.
 config :poll, PollWeb.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
 
+
+
+config :esbuild,
+  version: "0.15.18",
+  poll: [
+    args:
+      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --minify),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: Poll.Finch
 

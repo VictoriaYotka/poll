@@ -2,7 +2,13 @@ const plugin = require("tailwindcss/plugin");
 const heroiconsPlugin = require("./tailwind-heroicons-plugin");
 
 module.exports = {
-  content: ["./js/**/*.js", "../lib/poll_web.ex", "../lib/poll_web/**/*.*ex"],
+  content: [
+    "./js/**/*.js",
+    "./assets/**/*.html",
+    "./assets/**/*.js",
+    "../lib/poll_web.ex",
+    "../lib/poll_web/**/*.*ex",
+  ],
   theme: {
     extend: {
       fontFamily: {

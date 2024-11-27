@@ -44,6 +44,7 @@ defmodule Poll.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:ex_heroicons, "~> 3.0.0"},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.1",
@@ -70,19 +71,28 @@ defmodule Poll.MixProject do
   #     $ mix setup
   #
   # See the documentation for `Mix` for more info on aliases.
-  defp aliases do
-    [
-      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind poll", "esbuild poll"],
-      "assets.deploy": [
-        "tailwind poll --minify",
-        "esbuild poll --minify",
-        "phx.digest"
-      ]
+defp aliases do
+  [
+    setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
+    "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+    "ecto.reset": ["ecto.drop", "ecto.setup"],
+    test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+    "assets.setup": [
+      "cmd npm install --prefix assets",
+      "esbuild.install --if-missing",
+      "tailwind.install --if-missing"
+    ],
+    "assets.build": [
+      "tailwind poll --minify",
+      "esbuild poll --minify"
+    ],
+    "assets.deploy": [
+      "assets.setup",
+      "assets.build",
+      "cmd cd assets && npm run deploy",
+      "phx.digest"
     ]
-  end
+  ]
+end
+
 end
