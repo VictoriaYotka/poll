@@ -6,6 +6,12 @@ This is a simple polling application built with **Phoenix LiveView**. It allows 
 
 The solution includes a Dockerized PostgreSQL database for persistent storage of users, polls, and votes, and all functionality runs locally with `mix phx.server`.
 
+## Deployment
+
+The application is deployed on [Fly.io](https://poll-divine-violet-5969.fly.dev/).  
+Visit the deployed page here:  
+👉 **[Fly.io](https://poll-divine-violet-5969.fly.dev/)**
+
 ## Features
 
 - **User Registration**: Users can register by entering a username.
