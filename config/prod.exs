@@ -7,8 +7,6 @@ import Config
 # before starting your production server.
 config :poll, PollWeb.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
 
-
-
 config :esbuild,
   version: "0.15.18",
   poll: [

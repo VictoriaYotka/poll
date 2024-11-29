@@ -30,12 +30,12 @@ config :poll, PollWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :poll, Poll.Mailer, adapter: Swoosh.Adapters.Local
+# config :poll, Poll.Mailer, adapter: Swoosh.Adapters.Noop
 
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.15.18",
-  default: [
+  poll: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --minify),
     cd: Path.expand("../assets", __DIR__),

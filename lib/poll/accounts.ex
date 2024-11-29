@@ -6,7 +6,7 @@ defmodule Poll.Accounts do
   import Ecto.Query, warn: false
   alias Poll.Repo
 
-  alias Poll.Accounts.{User, UserToken, UserNotifier}
+  alias Poll.Accounts.{User, UserToken}
 
   ## Database getters
 
@@ -194,6 +194,7 @@ defmodule Poll.Accounts do
       {:error, :already_confirmed}
 
   """
+
   def deliver_user_confirmation_instructions(%User{} = user, confirmation_url_fun)
       when is_function(confirmation_url_fun, 1) do
     if user.confirmed_at do
@@ -201,7 +202,8 @@ defmodule Poll.Accounts do
     else
       {encoded_token, user_token} = UserToken.build_email_token(user, "confirm")
       Repo.insert!(user_token)
-      UserNotifier.deliver_confirmation_instructions(user, confirmation_url_fun.(encoded_token))
+
+      {:ok, user_token}
     end
   end
 
