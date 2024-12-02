@@ -176,28 +176,29 @@ defmodule PollWeb.PollLive do
       phx-hook="BackToTop"
       class="fixed bottom-24 right-5 md:right-[2%] lg:right-12 xl:right-[12%] 2xl:right-[16%] z-10 bg-indigo-500 text-white p-6 rounded-full shadow-lg hover:bg-indigo-800 hover:scale-110 transition-transform hidden"
     >
-      <.live_component
-        module={IconComponent}
+      <IconComponent.render
         id="back-to-top-double_arrow"
         name="double_arrow"
         width="24"
         height="24"
         fill="white"
         class="-rotate-90"
+        aria-label="go to top"
       />
     </button>
 
     <section class="max-w-3xl mx-auto px-4 pt-2 pb-12">
       <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 mb-6">
         <div class="w-1/2 sm:w-1/3">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.9 85.6" class="mb-4">
-            <g>
-              <path
-                class="st0"
-                d="M7.5,0h107.9c4.1,0,7.5,3.4,7.5,7.5v70.6c0,4.1-3.4,7.5-7.5,7.5H7.5c-4.1,0-7.5-3.4-7.5-7.5V7.5 C0,3.4,3.4,0,7.5,0L7.5,0z M69.9,63.3h28.5v4H69.9V63.3L69.9,63.3z M69.9,53.1H109v4H69.9V53.1L69.9,53.1z M92.1,35h5.6 c0.3,0,0.5,0.2,0.5,0.5v11c0,0.3-0.2,0.5-0.5,0.5h-5.6c-0.3,0-0.5-0.2-0.5-0.5v-11C91.6,35.3,91.8,35,92.1,35L92.1,35L92.1,35z M70.5,28.3h5.6c0.3,0,0.5,0.2,0.5,0.5v17.8c0,0.3-0.2,0.5-0.5,0.5h-5.6c-0.3,0-0.5-0.2-0.5-0.5V28.8 C69.9,28.5,70.2,28.3,70.5,28.3L70.5,28.3L70.5,28.3L70.5,28.3z M81.3,24.5h5.6c0.3,0,0.5,0.2,0.5,0.5v21.6c0,0.3-0.2,0.5-0.5,0.5 h-5.6c-0.3,0-0.5-0.2-0.5-0.5V25C80.8,24.7,81,24.5,81.3,24.5L81.3,24.5L81.3,24.5z M39.3,48.2l17,0.3c0,6.1-3,11.7-8,15.1 L39.3,48.2L39.3,48.2L39.3,48.2z M37.6,45.3l-0.2-19.8l0-1.3l1.3,0.1h0h0c1.6,0.1,3.2,0.4,4.7,0.8c1.5,0.4,2.9,1,4.3,1.7 c6.9,3.6,11.7,10.8,12.1,19l0.1,1.3l-1.3,0l-19.7-0.6l-1.1,0L37.6,45.3L37.6,45.3L37.6,45.3z M39.8,26.7L40,44.1l17.3,0.5 c-0.7-6.8-4.9-12.7-10.7-15.8c-1.2-0.6-2.5-1.1-3.8-1.5C41.7,27.1,40.8,26.9,39.8,26.7L39.8,26.7L39.8,26.7z M35.9,47.2L45.6,64 c-3,1.7-6.3,2.6-9.7,2.6c-10.7,0-19.4-8.7-19.4-19.4c0-10.4,8.2-19,18.6-19.4L35.9,47.2L35.9,47.2L35.9,47.2z M115.6,14.1H7.2v64.4 h108.4V14.1L115.6,14.1L115.6,14.1z"
-              />
-            </g>
-          </svg>
+        <IconComponent.render
+          id="logo-icon"
+          name="logo"
+          width="full"
+          height="full"
+          viewBox="0 0 122.9 85.6"
+          class="mb-4"
+          aria-label="logo"
+        />
           <h1 class="text-center text-l md:text-xl text-zinc-900 font-montserrat mb-4 md:mb-0">
             Introduct Polls
           </h1>
@@ -219,14 +220,14 @@ defmodule PollWeb.PollLive do
         class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white font-montserrat rounded-lg hover:scale-110 focus:scale-110 transition-transform"
       >
         <span class="font-semibold font-montserrat text-lg">Create Your Poll</span>
-        <.live_component
-          module={IconComponent}
-          id="create-link-double_arrow"
+        <IconComponent.render
+        id="create-link-double_arrow"
           name="double_arrow"
           stroke="white"
           fill="white"
           width="24"
           height="24"
+          aria-label="redirect to create poll"
         />
       </button>
     </section>
@@ -246,13 +247,13 @@ defmodule PollWeb.PollLive do
             placeholder="Search polls..."
             class="w-full px-8 py-2 text-gray-700 bg-white border border-indigo-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
           />
-          <.live_component
-            module={IconComponent}
+          <IconComponent.render
             id="search_icon"
             name="search"
             width="24"
             height="24"
             class="absolute top-2.5 left-2 w-5 h-5"
+            aria-label="search"
           />
         </div>
       </.form>
@@ -261,12 +262,12 @@ defmodule PollWeb.PollLive do
         <div class="flex items-center gap-1">
           <span class="text-sm text-gray-600">Sort by Date:</span>
           <button phx-click="sort_by_date" class="hover:scale-110 transition-transform">
-            <.live_component
-              module={IconComponent}
+            <IconComponent.render
               id="sort-direction-date"
               name="sort-direction"
               stroke="none"
               class={"transition-transform transform #{@date_svg_rotation_class}"}
+              aria-label="change sort direction by date"
             />
           </button>
         </div>
@@ -274,12 +275,12 @@ defmodule PollWeb.PollLive do
         <div class="flex items-center gap-1">
           <span class="text-sm text-gray-600">Sort by Popularity:</span>
           <button phx-click="sort_by_popularity">
-            <.live_component
-              module={IconComponent}
+            <IconComponent.render
               id="sort-direction-popularity"
               name="sort-direction"
               stroke="none"
               class={"transition-transform transform #{@popularity_svg_rotation_class}"}
+              aria-label="change sort direction by popularity"
             />
           </button>
         </div>
@@ -295,7 +296,12 @@ defmodule PollWeb.PollLive do
               <% else %>
                 <span class="text-sm text-gray-600">Show mine</span>
               <% end %>
-              <.live_component module={IconComponent} id="filter_icon" name="filter" stroke="none" />
+              <IconComponent.render
+                id="filter_icon"
+                name="filter"
+                stroke="none"
+                aria-label="filter by author: show mine/all"
+              />
             </button>
           </div>
         <% end %>
@@ -313,12 +319,12 @@ defmodule PollWeb.PollLive do
           class="flex items-center gap-2 font-montserrat hover:scale-110 focus:scale-110 transition-transform"
         >
           <span>Clear</span>
-          <.live_component
-            module={IconComponent}
+          <IconComponent.render
             id="clear_search_icon"
             name="close"
             width="16"
             height="16"
+            aria-label="clear user query"
           />
         </button>
       </div>
@@ -333,12 +339,12 @@ defmodule PollWeb.PollLive do
             class="flex items-center gap-2 font-montserrat hover:scale-110 focus:scale-110 transition-transform"
           >
             <span>Published by me</span>
-            <.live_component
-              module={IconComponent}
+            <IconComponent.render
               id="clear_filter_icon"
               name="close"
               width="16"
               height="16"
+              aria-label="clear filter"
             />
           </button>
         <% else %>

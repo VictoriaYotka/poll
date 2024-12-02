@@ -13,8 +13,8 @@ let ToggleMobileMenu = {
   },
 
   toggleMenu() {
-    const MenuIsClosedIcon = document.getElementById("menu-closed-icon")
-    const MenuIsOpenedIcon = document.getElementById("menu-opened-icon");
+    const MenuIsClosedIcon = document.getElementById("menu-closed");
+    const MenuIsOpenedIcon = document.getElementById("menu-opened");
 
     this.menu.classList.toggle("hidden");
     if (!this.menu.classList.contains("hidden")) {

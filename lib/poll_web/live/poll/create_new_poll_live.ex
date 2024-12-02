@@ -121,11 +121,11 @@ defmodule PollWeb.CreateNewPollLive do
                   phx-value-index={idx}
                   class="p-1 text-white rounded-md hover:scale-110 transition-transform"
                 >
-                  <.live_component
-                    module={IconComponent}
+                  <IconComponent.render
                     id={"delete_option_icon_#{idx + 1}"}
                     name="delete"
                     fill="black"
+                    aria_label="delete option"
                   />
                 </button>
               <% end %>
@@ -140,14 +140,14 @@ defmodule PollWeb.CreateNewPollLive do
             class="flex items-center gap-2 mt-4 px-4 py-2 mx-auto font-montserrat shadow-lg rounded-lg bg-neutral-100 hover:shadow-xl hover:scale-110 transition-transform"
           >
             <span>Add Option</span>
-            <.live_component
-              module={IconComponent}
+            <IconComponent.render
               id="add_option_icon"
               name="plus"
               width="12"
               height="12"
               stroke="none"
               viewBox="0 0 122.875 122.648"
+              aria_label="add option"
             />
           </button>
         <% end %>
@@ -158,12 +158,12 @@ defmodule PollWeb.CreateNewPollLive do
             class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white font-montserrat rounded-lg hover:scale-110 transition-transform"
           >
             <span class="text-lg">Publish new poll</span>
-            <.live_component
-              module={IconComponent}
+            <IconComponent.render
               id="create_double_arrow_icon"
               name="double_arrow"
               stroke="white"
               fill="white"
+              aria_label="create new poll"
             />
           </button>
         </div>

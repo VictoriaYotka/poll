@@ -9,6 +9,7 @@ defmodule PollWeb.Layouts do
   `use PollWeb, :live_view`.
   """
   use PollWeb, :html
+  alias PollWeb.IconComponent
 
   embed_templates "layouts/*"
 end
