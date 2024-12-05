@@ -88,7 +88,7 @@ defmodule Poll.Polls do
       ]
 
   """
-  def list_all_polls(sort, direction, query, offset, limit) do
+  def list_all_polls(current_user_id, sort, direction, query, offset, limit) do
     base_query =
       from p in Poll,
         left_join: u in assoc(p, :user),
@@ -100,6 +100,7 @@ defmodule Poll.Polls do
     base_query
     |> apply_user_query(query)
     |> apply_sort(sort || :date, direction || :desc)
+    |> apply_voted(current_user_id)
     |> offset(^offset)
     |> limit(^limit)
     |> Repo.all()
@@ -146,6 +147,22 @@ defmodule Poll.Polls do
     from p in query, order_by: [desc: p.inserted_at]
   end
 
+  defp apply_voted(query, nil) do
+    from p in query, select_merge: %{my_vote: false}
+  end
+
+  defp apply_voted(query, current_user_id) do
+    from p in query,
+      select_merge: %{
+        my_vote:
+          fragment(
+            "EXISTS (SELECT 1 FROM votes v WHERE v.poll_id = ? AND v.user_id = ?)",
+            p.id,
+            ^current_user_id
+          )
+      }
+  end
+
   @doc """
   Retrieves a paginated list of polls created by a specific user.
 
@@ -189,7 +206,9 @@ defmodule Poll.Polls do
         limit: ^limit,
         offset: ^offset
 
-    Repo.all(query)
+    query
+    |> apply_voted(user_id)
+    |> Repo.all()
   end
 
   @doc """
@@ -226,7 +245,9 @@ defmodule Poll.Polls do
         group_by: [p.id, u.id],
         select: %{poll: p, user: u, vote_count: count(v.id)}
 
-    Repo.one(base_query)
+    base_query
+    |> apply_voted(id)
+    |> Repo.one()
   end
 
   def change_poll(%Poll{} = poll, attrs \\ %{}) do

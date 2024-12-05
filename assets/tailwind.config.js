@@ -16,7 +16,14 @@ module.exports = {
         montserrat: ["Montserrat", "Arial", "Helvetica", "sans-serif"],
       },
       colors: {
-        brand: "#FD4F00",
+        main_accent: {
+          200: "#C7D2FE",
+          300: "#A5B4FC",
+          500: "#6366F1",
+          600: "#4F46E5",
+          800: "#3730A3",
+        },
+        bright_accent: "#F59E0B",
       },
     },
   },

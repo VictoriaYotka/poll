@@ -155,7 +155,7 @@ defmodule PollWeb.CreateNewPollLive do
         <div class="mt-6">
           <button
             type="submit"
-            class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white font-montserrat rounded-lg hover:scale-110 transition-transform"
+            class="flex items-center gap-4 mx-auto px-6 py-3 bg-main_accent-500 text-white font-montserrat rounded-lg hover:scale-110 transition-transform"
           >
             <span class="text-lg">Publish new poll</span>
             <IconComponent.render

@@ -2,6 +2,7 @@ defmodule PollWeb.SinglePollLive do
   use PollWeb, :live_view
   alias Poll.{Polls, Accounts}
   alias Poll.Accounts.User
+  alias PollWeb.IconComponent
   alias PollWeb.Helpers
 
   def mount(%{"id" => poll_id}, session, socket) do
@@ -68,20 +69,40 @@ defmodule PollWeb.SinglePollLive do
     ~H"""
     <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-10 py-4 mb-8">
       <div class="md:w-3/4 md:pe-6 md:border-r-2 md:border-indigo">
-        <h1 class="mb-2 text-xl sm:text-2xl text-indigo-800 font-montserrat"><%= @poll.title %></h1>
+        <h1 class="mb-2 text-xl sm:text-2xl text-main_accent-800 font-montserrat">
+          <%= @poll.title %>
+        </h1>
         <p class="mb-2 text-md sm:text-lg md:text-xl"><%= @poll.description %></p>
       </div>
       <div class="md:w-1/4">
         <p class="text-sm md:text-md text-gray-500">
-          <span class="me-1 text-3xl text-indigo-800"><%= length(@poll.votes) %></span> votes
+          <span class="ms-1 me-2 text-3xl text-main_accent-800"><%= length(@poll.votes) %></span>
+          votes
         </p>
-        <p class="text-sm md:text-md text-gray-500">
-          Author: <%= Helpers.extract_username_from_email(@poll.user.email) %>
-        </p>
-
-        <p class="text-sm md:text-md text-gray-500">
-          Publication date: <%= Helpers.format_datetime(@poll.inserted_at) %>
-        </p>
+        <div class="flex gap-2">
+          <IconComponent.render
+            id="user_icon"
+            name="user"
+            fill="white"
+            class="stroke-bright_accent"
+            aria-label="current user icon"
+          />
+          <p class="text-sm md:text-md text-gray-500">
+            <%= Helpers.extract_username_from_email(@poll.user.email) %>
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <IconComponent.render
+            id="calendar"
+            name="calendar"
+            fill="white"
+            class="stroke-bright_accent"
+            aria-label="current user icon"
+          />
+          <p class="text-sm md:text-md text-gray-500">
+            <%= Helpers.format_datetime(@poll.inserted_at) %>
+          </p>
+        </div>
       </div>
     </div>
 
@@ -106,12 +127,12 @@ defmodule PollWeb.SinglePollLive do
         </div>
       <% else %>
         <%= for option <- @poll.options do %>
-          <div class="md:flex md:justify-between md:items-baseline md:w-[71%] mb-6 p-4 shadow-lg rounded-lg  bg-neutral-100 hover:shadow-xl transition-transform">
+          <div class="flex flex-wrap justify-between items-baseline md:w-[71%] mb-6 p-4 shadow-lg rounded-lg bg-neutral-100 hover:shadow-xl transition-transform">
             <strong class="text-lg font-semibold text-gray-800"><%= option.text %></strong>
             <button
               phx-click="vote"
               phx-value-option_id={option.id}
-              class="mt-4 px-4 py-2 bg-indigo-600 text-white font-montserrat rounded-md hover:bg-indigo-700 hover:scale-110  transition-transform"
+              class="mt-4 ml-auto px-4 py-2 bg-main_accent-600 text-white font-montserrat rounded-md hover:bg-main_accent-800 hover:scale-110 transition-transform"
             >
               Vote
             </button>

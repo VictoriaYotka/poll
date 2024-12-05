@@ -16,15 +16,14 @@
     </script>
   </head>
   <body class="bg-white antialiased">
-    <header class="p-4 sm:p-6 lg:p-8 bg-indigo-500 ">
+    <header class="p-4 sm:p-6 lg:p-8 bg-main_accent-500 ">
       <div class="max-w-6xl mx-auto flex justify-between">
         <nav class="flex items-center gap-6 ">
           <.link
             href={~p"/"}
             class="flex items-center gap-4 leading-6 text-neutral-100 hover:text-white hover:scale-110 transition-transform"
           >
-
-          <IconComponent.render
+            <IconComponent.render
               id="logo-header"
               name="logo"
               viewBox="0 0 122.9 85.6"
@@ -87,24 +86,25 @@
             phx-hook="ToggleMobileMenu"
             class="text-zinc-900 hover:scale-110 transition-transform"
           >
-          <span id="menu-opened">
-          <IconComponent.render
-              id="menu-opened-icon"
-              name="menu-opened-icon"
-              fill="white"
-              stroke="white"
-              aria_label="open mobile menu"
-            />
+            <span id="menu-opened">
+              <IconComponent.render
+                id="menu-opened-icon"
+                name="menu-opened-icon"
+                fill="white"
+                stroke="white"
+                aria_label="open mobile menu"
+              />
             </span>
             <span id="menu-closed" class="hidden">
-            <IconComponent.render
-              id="menu-closed-icon"
-              name="menu-closed-icon"
-              width="20"
-              height="20"
-              fill="white"
-              aria_label="close mobile menu"
-            />
+              <IconComponent.render
+                id="menu-closed-icon"
+                name="menu-closed-icon"
+                width="20"
+                height="20"
+                fill="white"
+                stroke="none"
+                aria_label="close mobile menu"
+              />
             </span>
           </button>
         </div>
@@ -124,7 +124,7 @@
             <.link
               href={~p"/users/log_out"}
               method="delete"
-              class="text-[16px] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+              class="text-[16px] leading-6 text-zinc-900 hover:text-main_accent-800 hover:scale-110 transition-transform origin-right"
             >
               Log out
             </.link>
@@ -133,7 +133,7 @@
           <li>
             <.link
               href={~p"/users/register"}
-              class="text-[16px] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+              class="text-[16px] leading-6 text-zinc-900 hover:text-main_accent-800 hover:scale-110 transition-transform origin-right"
             >
               Register
             </.link>
@@ -141,7 +141,7 @@
           <li>
             <.link
               href={~p"/users/log_in"}
-              class="text-[16px] leading-6 text-zinc-900 hover:text-indigo-700 hover:scale-110 transition-transform origin-right"
+              class="text-[16px] leading-6 text-zinc-900 hover:text-main_accent-800 hover:scale-110 transition-transform origin-right"
             >
               Log in
             </.link>
@@ -154,14 +154,14 @@
     <footer
       id="scroll-footer"
       phx-hook="ShowFooter"
-      class="hidden fixed bottom-0 right-0 md:right-[50%] md:translate-x-1/2 bg-indigo-500 text-neutral-100 py-4 mx-auto w-full max-w-5xl"
+      class="hidden fixed bottom-0 right-0 md:right-[50%] md:translate-x-1/2 bg-main_accent-500 text-neutral-100 py-4 mx-auto w-full max-w-5xl"
     >
       <div class="container mx-auto text-center">
         <p>
           Made by
           <a
             href="https://github.com/VictoriaYotka"
-            class="ms-1 font-bold text-indigo-200 hover:text-neutral-100"
+            class="ms-1 font-bold text-main_accent-200 hover:text-neutral-100"
             target="_blank"
             rel="noopener noreferrer nofollow"
           >

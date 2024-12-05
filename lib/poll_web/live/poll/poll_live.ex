@@ -157,6 +157,7 @@ defmodule PollWeb.PollLive do
         Polls.list_polls_by_user(socket.assigns.current_user_id, socket.assigns.offset, @limit)
       else
         Polls.list_all_polls(
+          socket.assigns.current_user_id,
           socket.assigns.sort,
           socket.assigns.direction,
           socket.assigns.user_query,
@@ -174,7 +175,7 @@ defmodule PollWeb.PollLive do
     <button
       id="back-to-top"
       phx-hook="BackToTop"
-      class="fixed bottom-24 right-5 md:right-[2%] lg:right-12 xl:right-[12%] 2xl:right-[16%] z-10 bg-indigo-500 text-white p-6 rounded-full shadow-lg hover:bg-indigo-800 hover:scale-110 transition-transform hidden"
+      class="fixed bottom-24 right-5 md:right-[2%] lg:right-12 xl:right-[12%] 2xl:right-[16%] z-10 bg-main_accent-500 text-white p-6 rounded-full shadow-lg hover:bg-main_accent-800 hover:scale-110 transition-transform hidden"
     >
       <IconComponent.render
         id="back-to-top-double_arrow"
@@ -190,15 +191,15 @@ defmodule PollWeb.PollLive do
     <section class="max-w-3xl mx-auto px-4 pt-2 pb-12">
       <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 mb-6">
         <div class="w-1/2 sm:w-1/3">
-        <IconComponent.render
-          id="logo-icon"
-          name="logo"
-          width="full"
-          height="full"
-          viewBox="0 0 122.9 85.6"
-          class="mb-4"
-          aria-label="logo"
-        />
+          <IconComponent.render
+            id="logo-icon"
+            name="logo"
+            width="full"
+            height="full"
+            viewBox="0 0 122.9 85.6"
+            class="mb-4"
+            aria-label="logo"
+          />
           <h1 class="text-center text-l md:text-xl text-zinc-900 font-montserrat mb-4 md:mb-0">
             Introduct Polls
           </h1>
@@ -217,11 +218,11 @@ defmodule PollWeb.PollLive do
       </p>
       <button
         phx-click="redirect"
-        class="flex items-center gap-4 mx-auto px-6 py-3 bg-indigo-500 text-white font-montserrat rounded-lg hover:scale-110 focus:scale-110 transition-transform"
+        class="flex items-center gap-4 mx-auto px-6 py-3 bg-main_accent-500 text-white font-montserrat rounded-lg hover:scale-110 hover:bg-main_accent-800 focus:scale-110 focus:bg-main_accent-800 transition-transform"
       >
         <span class="font-semibold font-montserrat text-lg">Create Your Poll</span>
         <IconComponent.render
-        id="create-link-double_arrow"
+          id="create-link-double_arrow"
           name="double_arrow"
           stroke="white"
           fill="white"
@@ -245,7 +246,7 @@ defmodule PollWeb.PollLive do
             value={@user_query}
             type="text"
             placeholder="Search polls..."
-            class="w-full px-8 py-2 text-gray-700 bg-white border border-indigo-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            class="w-full px-8 py-2 text-gray-700 bg-white border border-main_accent-300 rounded-md focus:outline-none focus:ring-0"
           />
           <IconComponent.render
             id="search_icon"
@@ -274,7 +275,7 @@ defmodule PollWeb.PollLive do
 
         <div class="flex items-center gap-1">
           <span class="text-sm text-gray-600">Sort by Popularity:</span>
-          <button phx-click="sort_by_popularity">
+          <button phx-click="sort_by_popularity" class="hover:scale-110 transition-transform">
             <IconComponent.render
               id="sort-direction-popularity"
               name="sort-direction"
@@ -358,14 +359,14 @@ defmodule PollWeb.PollLive do
       <%= if @polls == [] do %>
         <p class="text-gray-500 text-lg">No polls available.</p>
       <% else %>
-        <%= for %{poll: poll, user: user, vote_count: vote_count} <- @polls do %>
+        <%= for %{poll: poll, user: user, vote_count: vote_count, my_vote: my_vote} <- @polls do %>
           <div class="shadow-md rounded-lg p-6 mb-6 hover:scale-105 hover:shadow-xl transition-transform">
             <.link
               href={~p"/#{poll.id}"}
-              class="flex flex-col md:flex-row md:items-center gap-8 md:gap-16"
+              class="flex flex-col md:flex-row md:items-center gap-2 md:gap-16"
             >
               <div class="md:w-3/4">
-                <h2 class="mb-2 text-lg md:text-2xl text-indigo-800 font-montserrat">
+                <h2 class="mb-2 text-lg md:text-2xl text-main_accent-800 font-montserrat">
                   <%= poll.title %>
                 </h2>
                 <p class="mb-2 text-sm sm:text-md">
@@ -374,14 +375,45 @@ defmodule PollWeb.PollLive do
               </div>
               <div class="md:w-1/4">
                 <p class="text-sm md:text-md text-gray-500">
-                  <span class="me-1 text-3xl text-indigo-800"><%= vote_count %></span> votes
+                  <span class="ms-1 me-2 text-3xl text-main_accent-800"><%= vote_count %></span> votes
                 </p>
-                <p class="text-sm md:text-md text-gray-500">
-                  Author: <%= Helpers.extract_username_from_email(user.email) %>
-                </p>
-                <p class="text-sm md:text-md text-gray-500">
-                  Publication date: <%= Helpers.format_datetime(poll.inserted_at) %>
-                </p>
+                <div class="flex gap-2">
+                  <IconComponent.render
+                    id="user_icon"
+                    name="user"
+                    fill="white"
+                    class="stroke-bright_accent"
+                    aria-label="current user icon"
+                  />
+                  <p class="text-sm md:text-md text-gray-500">
+                    <%= Helpers.extract_username_from_email(user.email) %>
+                  </p>
+                </div>
+                <div class="flex gap-2">
+                  <IconComponent.render
+                    id="calendar"
+                    name="calendar"
+                    fill="white"
+                    class="stroke-bright_accent"
+                    aria-label="current user icon"
+                  />
+                  <p class="text-sm md:text-md text-gray-500">
+                    <%= Helpers.format_datetime(poll.inserted_at) %>
+                  </p>
+                </div>
+                <%= if my_vote do %>
+                  <div class="flex gap-2 mt-2">
+                    <IconComponent.render
+                      id="user_already_voted"
+                      name="done"
+                      width="20"
+                      height="20"
+                      class="stroke-bright_accent fill-bright_accent"
+                      aria-label="current user has already voted"
+                    />
+                    <p class="text-sm md:text-md text-gray-500">You've already voted</p>
+                  </div>
+                <% end %>
               </div>
             </.link>
           </div>

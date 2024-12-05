@@ -41,7 +41,7 @@ defmodule PollWeb.UserRegistrationLive do
           <button
             phx-disable-with="Creating account..."
             type="submit"
-            class="flex items-center gap-4 mx-auto px-6 py-2 bg-indigo-500 text-white rounded-lg hover:scale-110 transition-transform"
+            class="flex items-center gap-4 mx-auto px-6 py-2 bg-main_accent-500 text-white rounded-lg hover:scale-110 transition-transform"
           >
             <span class="text-lg">Create an account</span>
             <svg
