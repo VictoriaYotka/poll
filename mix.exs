@@ -61,7 +61,8 @@ defmodule Poll.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:faker, "~> 0.18"},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:ssl_verify_fun, "~> 1.1.0"}
     ]
   end
 
